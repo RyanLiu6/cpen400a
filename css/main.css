@@ -1,5 +1,9 @@
-#header {
+body {
     width: 1000px;
+    margin: 0 auto;
+}
+
+#header {
     max-width: 1000px;
     height: 350px;
     display: inline-block;
