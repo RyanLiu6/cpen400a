@@ -96,7 +96,8 @@
 }
 
 .productImg h2 span {
-    display: none;
+    display: block;
+    visibility: hidden;
     color: white;
     font: bold 24px/45px Helvetica, Sans-Serif;
     background: rgb(0, 0, 0); /* fallback color */
@@ -108,15 +109,18 @@
 }
 
 .product:hover .productImg h2 span {
-    display: block;
+    visibility: visible;
 }
 
 #footer {
-    background-color: #3F93AA;
+    /* background-color: #3F93AA; */
     position:relative;
     margin:auto;
 }
 
 #footer font {
-
+    color: black;
+    text-align: right;
+    font-weight: bold;
+    font-style: italic;
 }
