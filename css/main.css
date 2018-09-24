@@ -38,7 +38,7 @@ body {
     padding: 0;
     border: 10px solid white;
     background-color: #3F93AA;
-    vertical-align: middle;
+    vertical-align: top;
     text-align: center;
     position: relative;
 }
@@ -80,6 +80,7 @@ body {
     position: relative;
     height: 150px;
     width: 150px;
+    margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -94,7 +95,7 @@ body {
 .productImg h2 {
     position: absolute;
     top: 70%;
-    width: 50px;
+    width: 100%;
     margin: 0;
     padding: 0;
 }
