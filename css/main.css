@@ -1,13 +1,26 @@
 body {
     width: 1000px;
     margin: 0 auto;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #header {
     max-width: 1000px;
-    height: 350px;
     display: inline-block;
-    margin:auto;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+#logo {
+    width: 250px;
+    margin: 5px;
+    margin-left: 8px;
+}
+
+#banner {
+    position: relative;
+    margin-right: 8px;
+    margin-bottom: 30px;
 }
 
 #content {
@@ -15,19 +28,15 @@ body {
     max-width: 1000px;
     display: inline-block;
     vertical-align: top;
-    margin:auto;
-}
-
-#logo {
-    width: 250px;
-    display: inline-block;
+    margin: auto;
 }
 
 #menu {
-    width: 250px;
+    width: 25%;
     display: inline-block;
     vertical-align: top;
-    margin: 0;
+    text-align: center;
+    margin: -3px;
     padding: 0;
 }
 
@@ -48,6 +57,7 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
     color: white;
+    font-weight: bold;
 }
 
 .menuItem:hover {
@@ -59,12 +69,11 @@ body {
 }
 
 #productList {
-    width: 600px;
+    width: 75%;
     display: inline-block;
     vertical-align: top;
     margin: 0;
     padding: 0;
-    text-align: center;
 }
 
 .product {
@@ -74,6 +83,10 @@ body {
     margin: 0;
     padding: 0;
     vertical-align: top;
+}
+
+.product h2 {
+    text-align: center;
 }
 
 .productImg {
@@ -94,7 +107,7 @@ body {
 
 .productImg h2 {
     position: absolute;
-    top: 70%;
+    top: 68%;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -103,10 +116,12 @@ body {
 .productImg h2 span {
     display: block;
     visibility: hidden;
+    text-align: center;
     color: white;
-    font: bold 24px/45px Helvetica, Sans-Serif;
+    font-family: Arial, Helvetica, sans-serif;
     background: rgb(0, 0, 0); /* fallback color */
     background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
 }
 
 .product:hover {
@@ -124,8 +139,6 @@ body {
 }
 
 #footer font {
-    color: black;
-    text-align: right;
+    text-align: left;
     font-weight: bold;
-    font-style: italic;
 }
