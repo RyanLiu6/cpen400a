@@ -5,30 +5,31 @@ body {
 }
 
 #header {
-    max-width: 1000px;
+    width: 1000px;
     display: inline-block;
     position: relative;
-    margin-bottom: 10px;
+    background-color: #3F93AA;
 }
 
 #logo {
-    width: 250px;
-    margin: 5px;
-    margin-left: 8px;
+    width: 200px;
+    float: left;
+    vertical-align: middle;
+    margin: 20px;
+    border-radius: 50%;
 }
 
 #banner {
-    position: relative;
-    margin-right: 8px;
-    margin-bottom: 30px;
+    width: 700px;
+    float: right;
+    vertical-align: middle;
+    margin: 20px;
 }
 
 #content {
     width: 1000px;
-    max-width: 1000px;
     display: inline-block;
     vertical-align: top;
-    margin: auto;
 }
 
 #menu {
@@ -36,16 +37,19 @@ body {
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    margin: -3px;
+    margin-right: -5px;
     padding: 0;
+    padding-top: 12px;
 }
 
 .menuItem {
+    float: left;
     height: 50px;
     width: 200px;
     margin: 0;
     padding: 0;
-    border: 10px solid white;
+    border-top: 10px solid white;
+    border-bottom: 10px solid white;
     background-color: #3F93AA;
     vertical-align: top;
     text-align: center;
@@ -73,11 +77,11 @@ body {
     display: inline-block;
     vertical-align: top;
     margin: 0;
-    padding: 0;
+    padding: 6px 0;
 }
 
 .product {
-    width: 190px;
+    width: 247px;
     display: inline-block;
     position: relative;
     margin: 0;
@@ -93,7 +97,7 @@ body {
     position: relative;
     height: 150px;
     width: 150px;
-    margin-top: 20px;
+    margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -118,7 +122,6 @@ body {
     visibility: hidden;
     text-align: center;
     color: white;
-    font-family: Arial, Helvetica, sans-serif;
     background: rgb(0, 0, 0); /* fallback color */
     background: rgba(0, 0, 0, 0.7);
     padding: 10px;
@@ -133,12 +136,16 @@ body {
 }
 
 #footer {
-    /* background-color: #3F93AA; */
-    position:relative;
-    margin:auto;
+    background-color: #3F93AA;
+    padding: 1px 20px;
+    text-align: right;
+}
+
+#footer h1 {
+    color: white;
 }
 
 #footer font {
-    text-align: left;
     font-weight: bold;
+    color: white;
 }
