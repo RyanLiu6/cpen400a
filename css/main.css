@@ -65,11 +65,11 @@ body {
 }
 
 .menuItem:hover {
-    background-color: #84b7b8;
+    background-color: #214F5B;
 }
 
 .menuItem:hover font {
-    color: #F0F8FF;
+    color: #CBCBCB;
 }
 
 #productList {
@@ -128,7 +128,7 @@ body {
 }
 
 .product:hover {
-    background-color: #F0F8FF;
+    background-color: #E0F1FF;
 }
 
 .product:hover .productImg h2 span {
