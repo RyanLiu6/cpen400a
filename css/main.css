@@ -134,11 +134,11 @@ body {
 
 #footer {
     /* background-color: #3F93AA; */
+    text-align: right;
     position:relative;
     margin:auto;
 }
 
 #footer font {
-    text-align: left;
     font-weight: bold;
 }
