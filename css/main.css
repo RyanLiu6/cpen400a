@@ -1,0 +1,151 @@
+body {
+    width: 1000px;
+    margin: 0 auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#header {
+    width: 1000px;
+    display: inline-block;
+    position: relative;
+    background-color: #3F93AA;
+}
+
+#logo {
+    width: 200px;
+    float: left;
+    vertical-align: middle;
+    margin: 20px;
+    border-radius: 50%;
+}
+
+#banner {
+    width: 700px;
+    float: right;
+    vertical-align: middle;
+    margin: 20px;
+}
+
+#content {
+    width: 1000px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#menu {
+    width: 25%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    margin-right: -5px;
+    padding: 0;
+    padding-top: 12px;
+}
+
+.menuItem {
+    float: left;
+    height: 50px;
+    width: 200px;
+    margin: 0;
+    padding: 0;
+    border-top: 10px solid white;
+    border-bottom: 10px solid white;
+    background-color: #3F93AA;
+    vertical-align: top;
+    text-align: center;
+    position: relative;
+}
+
+.menuItem font {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+}
+
+.menuItem:hover {
+    background-color: #214F5B;
+}
+
+.menuItem:hover font {
+    color: #CBCBCB;
+}
+
+#productList {
+    width: 75%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    padding: 6px 0;
+}
+
+.product {
+    width: 32%;
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+
+.product h2 {
+    text-align: center;
+}
+
+.productImg {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.productImg img {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.productImg h2 {
+    position: absolute;
+    top: 68%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.productImg h2 span {
+    display: block;
+    visibility: hidden;
+    text-align: center;
+    color: white;
+    background: rgb(0, 0, 0); /* fallback color */
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+}
+
+.product:hover {
+    background-color: #E0F1FF;
+}
+
+.product:hover .productImg h2 span {
+    visibility: visible;
+}
+
+#footer {
+    background-color: #3F93AA;
+    padding: 1px 20px;
+    text-align: right;
+}
+
+#footer h1 {
+    color: white;
+}
+
+#footer font {
+    font-weight: bold;
+    color: white;
+}
