@@ -5,6 +5,7 @@
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <script src="http://ece.ubc.ca/~kumseok/src/cpen400a/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script src="http://ece.ubc.ca/~kumseok/src/cpen400a/test-1.js" type="text/javascript"></script>
+        <script src="js/app.js" type="text/javascript"></script>
     </head>
 
     <body>
@@ -31,6 +32,10 @@
                         <h2><span>$10</span></h2>
                     </div>
                     <h2>Box 1</h2>
+                    <div id="box1_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[0]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[0]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -38,6 +43,10 @@
                         <h2><span>$5</span></h2>
                     </div>
                     <h2>Box 2</h2>
+                    <div id="box2_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[1]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[1]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -45,6 +54,10 @@
                         <h2><span>$20</span></h2>
                     </div>
                     <h2>Dress</h2>
+                    <div id="dress_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[2]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[2]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -52,6 +65,10 @@
                         <h2><span>$100</span></h2>
                     </div>
                     <h2>Shirt</h2>
+                    <div id="shirt_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[3]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[3]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -59,6 +76,10 @@
                         <h2><span>$50</span></h2>
                     </div>
                     <h2>Jeans</h2>
+                    <div id="jeans_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[4]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[4]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -66,6 +87,10 @@
                         <h2><span>$20</span></h2>
                     </div>
                     <h2>Keyboard</h2>
+                    <div id="keyboard_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[5]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[5]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -73,6 +98,10 @@
                         <h2><span>$40</span></h2>
                     </div>
                     <h2>Keyboard Combo</h2>
+                    <div id="keyboardCombo_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[6]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[6]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -80,6 +109,10 @@
                         <h2><span>$350</span></h2>
                     </div>
                     <h2>PC</h2>
+                    <div id="pc_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[7]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[7]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -87,6 +120,10 @@
                         <h2><span>$999</span></h2>
                     </div>
                     <h2>Despacito</h2>
+                    <div id="despacito_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[8]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[8]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -94,6 +131,10 @@
                         <h2><span>$30</span></h2>
                     </div>
                     <h2>JoJo's Bizarre Adventures</h2>
+                    <div id="jojo_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[9]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[9]);">Remove from Cart</button>
+                    </div>
                 </li>
                 <li class="product">
                     <div class="productImg">
@@ -101,6 +142,10 @@
                         <h2><span>$100</span></h2>
                     </div>
                     <h2>Tent</h2>
+                    <div id="tent_buttons">
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodLabel[10]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodLabel[10]);">Remove from Cart</button>
+                    </div>
                 </li>
             </ul>
         </div>
