@@ -93,6 +93,30 @@ body {
     text-align: center;
 }
 
+.product .prodButtons {
+    visibility: hidden;
+}
+
+.product .btn-add {
+    background-color: #d3d3d3;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.product .btn-remove {
+    background-color: #d3d3d3;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
 .productImg {
     position: relative;
     height: 150px;
@@ -132,6 +156,10 @@ body {
 }
 
 .product:hover .productImg h2 span {
+    visibility: visible;
+}
+
+.product:hover .prodButtons {
     visibility: visible;
 }
 
