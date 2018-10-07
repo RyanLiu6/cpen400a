@@ -25,156 +25,157 @@
                 <li class="menuItem"><font>Supplies</font></li>
             </ul>
 
-            <button type="button" id="btn-show-cart" style="float: right;" onclick="showCart(store.cart);">Show Cart</button>
-
-            <ul id="productList" style="list-style-type:none">
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Box1_$10.png">
-                        <h2><span>$10</span></h2>
-                    </div>
-                    <h2>Box 1</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[0]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[0]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Box2_$5.png">
-                        <h2><span>$5</span></h2>
-                    </div>
-                    <h2>Box 2</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[1]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[1]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Clothes1_$20.png">
-                        <h2><span>$20</span></h2>
-                    </div>
-                    <h2>Clothes 1</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[2]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[2]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Clothes2_$30.png">
-                        <h2><span>$100</span></h2>
-                    </div>
-                    <h2>Clothes 2</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[3]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[3]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/KeyboardCombo_$40.png">
-                        <h2><span>$40</span></h2>
-                    </div>
-                    <h2>Keyboard Combo</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[4]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[4]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Mice_$20.png">
-                        <h2><span>$20</span></h2>
-                    </div>
-                    <h2>Mice</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[5]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[5]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/PC1_$350.png">
-                        <h2><span>$350</span></h2>
-                    </div>
-                    <h2>PC1</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[6]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[6]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/PC2_$400.png">
-                        <h2><span>$400</span></h2>
-                    </div>
-                    <h2>PC2</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[7]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[7]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/PC3_$300.png">
-                        <h2><span>$300</span></h2>
-                    </div>
-                    <h2>PC3</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[8]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[8]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Tent_$100.png">
-                        <h2><span>$100</span></h2>
-                    </div>
-                    <h2>Tent</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[9]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[9]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Jeans_$50.png">
-                        <h2><span>$50</span></h2>
-                    </div>
-                    <h2>Jeans</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[10]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[10]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/Keyboard_$20.png">
-                        <h2><span>$20</span></h2>
-                    </div>
-                    <h2>Keyboard</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[11]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[11]);">Remove from Cart</button>
-                </li>
-                <!--
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/AmazonEcho.png">
-                        <h2><span>$130</span></h2>
-                    </div>
-                    <h2>Alexa</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[12]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[12]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/play.png">
-                        <h2><span>$250</span></h2>
-                    </div>
-                    <h2>Play</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[13]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[13]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/despacito.jpg">
-                        <h2><span>$999</span></h2>
-                    </div>
-                    <h2>Despacito</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[14]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[14]);">Remove from Cart</button>
-                </li>
-                <li class="product">
-                    <div class="productImg">
-                        <img src="images/jojo.jpg">
-                        <h2><span>$30</span></h2>
-                    </div>
-                    <h2>JoJo's Bizarre Adventures</h2>
-                    <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[15]);">Add to Cart</button>
-                    <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[15]]);">Remove from Cart</button>
-                </li>
-                -->
-            </ul>
+            <div id="product-div">
+                <button type="button" id="btn-show-cart" style="float: right;" onclick="showCart(store.cart);">Show Cart</button>
+                <ul id="productList" style="list-style-type:none">
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Box1_$10.png">
+                            <h2><span>$10</span></h2>
+                        </div>
+                        <h2>Box 1</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[0]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[0]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Box2_$5.png">
+                            <h2><span>$5</span></h2>
+                        </div>
+                        <h2>Box 2</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[1]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[1]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Clothes1_$20.png">
+                            <h2><span>$20</span></h2>
+                        </div>
+                        <h2>Clothes 1</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[2]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[2]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Clothes2_$30.png">
+                            <h2><span>$100</span></h2>
+                        </div>
+                        <h2>Clothes 2</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[3]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[3]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/KeyboardCombo_$40.png">
+                            <h2><span>$40</span></h2>
+                        </div>
+                        <h2>Keyboard Combo</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[4]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[4]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Mice_$20.png">
+                            <h2><span>$20</span></h2>
+                        </div>
+                        <h2>Mice</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[5]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[5]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/PC1_$350.png">
+                            <h2><span>$350</span></h2>
+                        </div>
+                        <h2>PC1</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[6]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[6]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/PC2_$400.png">
+                            <h2><span>$400</span></h2>
+                        </div>
+                        <h2>PC2</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[7]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[7]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/PC3_$300.png">
+                            <h2><span>$300</span></h2>
+                        </div>
+                        <h2>PC3</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[8]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[8]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Tent_$100.png">
+                            <h2><span>$100</span></h2>
+                        </div>
+                        <h2>Tent</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[9]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[9]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Jeans_$50.png">
+                            <h2><span>$50</span></h2>
+                        </div>
+                        <h2>Jeans</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[10]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[10]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/Keyboard_$20.png">
+                            <h2><span>$20</span></h2>
+                        </div>
+                        <h2>Keyboard</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[11]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[11]);">Remove from Cart</button>
+                    </li>
+                    <!--
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/AmazonEcho.png">
+                            <h2><span>$130</span></h2>
+                        </div>
+                        <h2>Alexa</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[12]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[12]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/play.png">
+                            <h2><span>$250</span></h2>
+                        </div>
+                        <h2>Play</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[13]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[13]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/despacito.jpg">
+                            <h2><span>$999</span></h2>
+                        </div>
+                        <h2>Despacito</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[14]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[14]);">Remove from Cart</button>
+                    </li>
+                    <li class="product">
+                        <div class="productImg">
+                            <img src="images/jojo.jpg">
+                            <h2><span>$30</span></h2>
+                        </div>
+                        <h2>JoJo's Bizarre Adventures</h2>
+                        <button type="button" class="btn-add" onclick="store.addItemToCart(prodId[15]);">Add to Cart</button>
+                        <button type="button" class="btn-remove" onclick="store.removeItemFromCart(prodId[15]]);">Remove from Cart</button>
+                    </li>
+                    -->
+                </ul>
+            </div>
         </div>
 
         <div id="footer">
