@@ -1,19 +1,22 @@
 // Global Variables for access
-var NUM_PRODUCTS = 11;
+var NUM_PRODUCTS = 12;
 var PRODUCT_LABEL = "label";
 var PRODUCT_IMGURL = "imageUrl";
 var PRODUCT_PRICE = "price";
 var PRODUCT_QUANTITY = "quantity";
 
 // Product Information - could be replaced with document.getElementBy ...
-var prodLabel = ["Box 1", "Box 2", "Dress", "Shirt", "Jeans", "Keyboard",
-"Alexa", "Play", "Despacito", "PC", "JoJo's Bizarre Adventures", "Tent"];
+var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "KeyboardCombo", "Mice",
+"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
 
-var prodURL = ["images/Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
-"Clothes2_$30.png", "Jeans_$50.png", "Keyboard_$20.png", "AmazonEcho.png",
-"play.png", "despacito.png", "PC1_$350.png", "jojo.png", "Tent_$100.png"];
+var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Keyboard Combo", "Mice",
+"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
 
-var prodPrice = [10, 5, 20, 100, 50, 20, 130, 250, 999, 350, 30, 100];
+var prodURL = ["Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
+"Clothes2_$30.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
+"PC2_$400.png", "PC3_$300.png", "Tent_$100.png", "Jeans_$50.png", "Keyboard_$20.png"];
+
+var prodPrice = [10, 5, 20, 100, 40, 20, 350, 400, 300, 100, 50, 20];
 
 // Inactivity to alert User
 var inactiveTime = 0
@@ -31,14 +34,14 @@ Store.prototype.addItemToCart = function(itemName) {
     console.log("Add Item to Cart");
 
     // Check if itemName is in labels
-    if (prodLabel.indexOf(itemName) != -1) {
+    if (this.stock[itemName] != undefined) {
         // Check if theres any stock left
         if (this.stock[itemName][PRODUCT_QUANTITY] >= 1) {
             // Since there is stock available, add to cart
             if (itemName in this.cart) {
                 this.cart[itemName]++;
             } else {
-                this.cart[itemName] = 1
+                this.cart[itemName] = 1;
             }
 
             // Decrement from stock
@@ -123,7 +126,7 @@ function initProd() {
         prod[PRODUCT_PRICE] = prodPrice[i];
         prod[PRODUCT_QUANTITY] = 5;
 
-        products[prodLabel[i]] = prod;
+        products[prodId[i]] = prod;
     }
 }
 
