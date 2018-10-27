@@ -4,6 +4,8 @@
     <head>
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <script src="js/app.js" type="text/javascript"></script>
+        <script src="http://ece.ubc.ca/~kumseok/src/cpen400a/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="http://ece.ubc.ca/~kumseok/src/cpen400a/test-3.js" type="text/javascript"></script>
     </head>
 
     <body onload="renderProductList(productView, store);">
@@ -26,6 +28,28 @@
             <div id="productView">
                 <button type="button" id="btn-show-cart" style="float: right;" onclick="showCart(store.cart); ">Show Cart</button>
             </div>
+        </div>
+
+        <div id="modal">
+            <div id="modal-content">
+                <table id="cartTable">
+                    <tr id="tableHeader">
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                    </tr>
+                    <tr id="tableEntry">
+                        <th>Stuff</th>
+                        <th>
+                            <button class="cartTableAdd"> + </button>
+                            5
+                            <button class="cartTableRemove"> - </button>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+            <button id="btn-hide-cart">
+
+            </button>
         </div>
 
         <div id="footer">

@@ -227,7 +227,9 @@ function renderProduct(container, storeInstance, itemName) {
 
         // If created, update em
         // Else, append to container
-        if (domsCreated) {
+
+        var img = container.getElementsByClassName("productImg");
+        if (img.length > 0) {
             // Product Image
             var currImg = document.getElementById("prodImg-" + itemName);
             container.replaceChild(newImg, currImg);
@@ -333,3 +335,18 @@ function createButtonsDom(itemName, storeInstance, currItem) {
 // function renderCart(container, storeInstance) {
 //
 // }
+
+/*******************************************************************************
+**************************** Cart Render Functions *****************************
+*******************************************************************************/
+function renderCart(container, storeInstance) {
+    var tableDom = document.createElement("table");
+    tableDom.id = "cartTable";
+
+    
+
+    for(var curKey in storeInstance.cart) {
+        var curQuantity = storeInstance.cart[curKey];
+        
+    }
+}
