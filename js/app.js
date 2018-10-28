@@ -166,7 +166,7 @@ Store.prototype.removeItemFromCart = function(itemName) {
 function showCart(store) {
     console.log("Show Cart to User");
 
-    var modalContent = document.getElementById("modal-content");
+    var modalContent = document.getElementById("modal");
     renderCart(modalContent, store);
 
     document.getElementById("modal").style.visibility = "visible";
@@ -409,6 +409,9 @@ function createButtonsDom(itemName, storeInstance, currItem) {
 **************************** Cart Render Functions *****************************
 *******************************************************************************/
 function renderCart(container, storeInstance) {
+    var modalContent = document.createElement("div");
+    modalContent.id = "modal-content";
+
     var tableDom = document.createElement("table");
     tableDom.id = "cartTable";
 
@@ -418,23 +421,45 @@ function renderCart(container, storeInstance) {
     var totalPrice = 0;
 
     for(var curKey in storeInstance.cart) {
+        var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
         var curQuantity = storeInstance.cart[curKey];
         
-        var curItemEntry = createTableEntry(curKey, curQuantity, container, storeInstance);
+        var curItemEntry = createTableEntry(curLabel, curQuantity, container, storeInstance);
         tableDom.appendChild(curItemEntry);
 
-        //totalPrice += curQuantity * storeInstance[]
+        totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
     }
 
-    var oldTable = container.getElementsByTagName("table")[0];
-    if(oldTable === undefined) {
-        container.appendChild(tableDom);
+    var totalEntry = createTotalEntry(totalPrice);
+    tableDom.appendChild(totalEntry);
+
+    var hideBtn = document.createElement("button");
+    hideBtn.id = "btn-hide-cart";
+    hideBtn.appendChild(document.createTextNode("Close"));
+    hideBtn.onclick = function() {
+        hideCart();
+    };
+
+    modalContent.appendChild(tableDom);
+
+    //var oldTable = container.getElementsByTagName("table")[0];
+    if(container.firstChild === undefined) {
+        container.appendChild(modalContent);
+        container.appendChild(hideBtn);
     }
     else {
-        container.replaceChild(tableDom, oldTable);
+        replaceCart(container, modalContent, hideBtn);
+        //container.replaceChild(tableDom, oldTable);
+    }
+}
+
+function replaceCart(container, content, button) {
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
     }
 
-    container.style.display = "block";
+    container.appendChild(content);
+    container.appendChild(button);
 }
 
 function createTableHeader() {
@@ -488,8 +513,20 @@ function createTableEntry(itemName, quantity, container, storeInstance) {
     return entry;
 }
 
-function createTotalEntry(storeInstance) {
+function createTotalEntry(total) {
+    var totalEntry = document.createElement("tr");
+    totalEntry.id = "totalPrice";
+    
+    var totalTag = document.createElement("th");
+    totalTag.appendChild(document.createTextNode("Total"));
 
+    var totalPrice = document.createElement("th");
+    totalPrice.appendChild(document.createTextNode("$" + total));
+
+    totalEntry.appendChild(totalTag);
+    totalEntry.appendChild(totalPrice);
+
+    return totalEntry;
 }
 
 document.addEventListener('keydown', function(event) {
