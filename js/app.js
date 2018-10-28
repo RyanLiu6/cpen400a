@@ -166,7 +166,7 @@ Store.prototype.removeItemFromCart = function(itemName) {
 function showCart(store) {
     console.log("Show Cart to User");
 
-    var modalContent = document.getElementById("modal");
+    var modalContent = document.getElementById("modal-content");
     renderCart(modalContent, store);
 
     document.getElementById("modal").style.visibility = "visible";
@@ -190,6 +190,9 @@ var store = new Store(products);
 store.onUpdate = function(itemName) {
     console.log(document.getElementById("product-" + itemName));
     renderProduct(document.getElementById("product-" + itemName), this, itemName);
+
+    var modalContainer = document.getElementById("modal-content");
+    renderCart(modalContainer, this);
 }
 
 /*******************************************************************************
@@ -409,9 +412,6 @@ function createButtonsDom(itemName, storeInstance, currItem) {
 **************************** Cart Render Functions *****************************
 *******************************************************************************/
 function renderCart(container, storeInstance) {
-    var modalContent = document.createElement("div");
-    modalContent.id = "modal-content";
-
     var tableDom = document.createElement("table");
     tableDom.id = "cartTable";
 
@@ -420,46 +420,35 @@ function renderCart(container, storeInstance) {
 
     var totalPrice = 0;
 
-    for(var curKey in storeInstance.cart) {
-        var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
-        var curQuantity = storeInstance.cart[curKey];
-        
-        var curItemEntry = createTableEntry(curLabel, curQuantity, container, storeInstance);
-        tableDom.appendChild(curItemEntry);
+    if(storeInstance !== undefined) {
+        for(var curKey in storeInstance.cart) {
+            var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
+            var curQuantity = storeInstance.cart[curKey];
+            
+            var curItemEntry = createTableEntry(curLabel, curQuantity, container, storeInstance);
+            tableDom.appendChild(curItemEntry);
 
-        totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
+            totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
+        }
     }
 
     var totalEntry = createTotalEntry(totalPrice);
     tableDom.appendChild(totalEntry);
 
-    var hideBtn = document.createElement("button");
-    hideBtn.id = "btn-hide-cart";
-    hideBtn.appendChild(document.createTextNode("Close"));
-    hideBtn.onclick = function() {
-        hideCart();
-    };
-
-    modalContent.appendChild(tableDom);
-
-    //var oldTable = container.getElementsByTagName("table")[0];
     if(container.firstChild === undefined) {
-        container.appendChild(modalContent);
-        container.appendChild(hideBtn);
+        container.appendChild(tableDom);
     }
     else {
-        replaceCart(container, modalContent, hideBtn);
-        //container.replaceChild(tableDom, oldTable);
+        replaceCart(container, tableDom);
     }
 }
 
-function replaceCart(container, content, button) {
+function replaceCart(container, content) {
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
 
     container.appendChild(content);
-    container.appendChild(button);
 }
 
 function createTableHeader() {
