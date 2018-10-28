@@ -26,30 +26,13 @@
             </ul>
 
             <div id="productView">
-                <button type="button" id="btn-show-cart" style="float: right;" onclick="showCart(store.cart); ">Show Cart</button>
+                <button type="button" id="btn-show-cart" style="float: right;" onclick="showCart(store); ">Show Cart</button>
             </div>
         </div>
 
         <div id="modal">
-            <div id="modal-content">
-                <table id="cartTable">
-                    <tr id="tableHeader">
-                        <th>Item Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                    <tr id="tableEntry">
-                        <th>Stuff</th>
-                        <th>
-                            <button class="cartTableAdd"> + </button>
-                            5
-                            <button class="cartTableRemove"> - </button>
-                        </th>
-                    </tr>
-                </table>
-            </div>
-            <button id="btn-hide-cart">
-
-            </button>
+            <div id="modal-content"></div>
+            <button id="btn-hide-cart" onclick="hideCart();">Close</button>
         </div>
 
         <div id="footer">

@@ -20,6 +20,75 @@ var prodURL = ["Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
 
 var prodPrice = [10, 5, 20, 100, 40, 20, 350, 400, 300, 100, 50, 20];
 
+var products = {
+    Box1: {
+        label: "Box 1",
+        imageUrl: "Box1_$10.png",
+        price: 10,
+        quantity: 5
+    },
+    Box2: {
+        label: "Box 2",
+        imageUrl: "Box2_$5.png",
+        price: 5,
+        quantity: 5
+    },
+    Clothes1: {
+        label: "Clothes 1",
+        imageUrl: "Clothes1_$20.png",
+        price: 20,
+        quantity: 5
+    },
+    Clothes2: {
+        label: "Clothes 2",
+        imageUrl: "Clothes2_$30.png",
+        price: 100,
+        quantity: 5
+    },
+    KeyboardCombo: {
+        label: "Keyboard Combo",
+        imageUrl: "KeyboardCombo_$40.png",
+        price: 40,
+        quantity: 5
+    },
+    PC1: {
+        label: "PC1",
+        imageUrl: "PC1_$350.png",
+        price: 350,
+        quantity: 5
+    },
+    PC2: {
+        label: "PC2",
+        imageUrl: "PC2_$400.png",
+        price: 400,
+        quantity: 5
+    },
+    PC3: {
+        label: "PC3",
+        imageUrl: "PC3_$300.png",
+        price: 300,
+        quantity: 5
+    },
+    Tent: {
+        label: "Tent",
+        imageUrl: "Tent_$100.png",
+        price: 100,
+        quantity: 5
+    },
+    Jeans: {
+        label: "Jeans",
+        imageUrl: "Jeans_$50.png",
+        price: 50,
+        quantity: 5
+    },
+    Keyboard: {
+        label: "Keyboard",
+        imageUrl: "Keyboard_$20.png",
+        price: 20,
+        quantity: 5
+    }
+}
+
 // Inactivity to alert User
 var inactiveTime = 0;
 
@@ -54,14 +123,14 @@ Store.prototype.addItemToCart = function(itemName) {
 
             // Decrement from stock
             this.stock[itemName][PRODUCT_QUANTITY]--;
+
+            // Updating view
+            this.onUpdate(itemName);
         } else {
             var err = "Item " + itemName + " is out of stock. Please select another item.";
             alert(err);
         }
     }
-
-    // Updating view
-    this.onUpdate(itemName);
 
     // Reset Inactivity
     resetInactivity();
@@ -94,20 +163,20 @@ Store.prototype.removeItemFromCart = function(itemName) {
 }
 
 // Shows the cart to the user
-function showCart(cart) {
+function showCart(store) {
     console.log("Show Cart to User");
-    var userCart = "";
 
-    for (var key in cart) {
-        userCart += key + " : ";
-        userCart += cart[key];
-        userCart += "\n";
-    }
+    var modalContent = document.getElementById("modal-content");
+    renderCart(modalContent, store);
 
-    alert(userCart);
+    document.getElementById("modal").style.visibility = "visible";
 
     // Reset Inactivity
     resetInactivity();
+}
+
+function hideCart() {
+    document.getElementById("modal").style.visibility = "hidden";
 }
 
 // Products catalogue object
@@ -281,7 +350,7 @@ function createImageDom(itemName, currItem) {
 
     imgDom.src = IMAGE_BASE_URL + currItem[PRODUCT_IMGURL];
     var priceText = document.createElement("span");
-    priceText.appendChild(document.createTextNode(currItem[PRODUCT_PRICE].toString()));
+    priceText.appendChild(document.createTextNode("$" + currItem[PRODUCT_PRICE].toString()));
     priceDom.appendChild(priceText);
 
     prodImgDom.className = "productImg";
@@ -343,10 +412,88 @@ function renderCart(container, storeInstance) {
     var tableDom = document.createElement("table");
     tableDom.id = "cartTable";
 
-    
+    var header = createTableHeader();
+    tableDom.appendChild(header);
+
+    var totalPrice = 0;
 
     for(var curKey in storeInstance.cart) {
         var curQuantity = storeInstance.cart[curKey];
         
+        var curItemEntry = createTableEntry(curKey, curQuantity, container, storeInstance);
+        tableDom.appendChild(curItemEntry);
+
+        //totalPrice += curQuantity * storeInstance[]
     }
+
+    var oldTable = container.getElementsByTagName("table")[0];
+    if(oldTable === undefined) {
+        container.appendChild(tableDom);
+    }
+    else {
+        container.replaceChild(tableDom, oldTable);
+    }
+
+    container.style.display = "block";
 }
+
+function createTableHeader() {
+    var header = document.createElement("tr");
+    header.id = "tableHeader";
+    
+    var headerName = document.createElement("th");
+    headerName.appendChild(document.createTextNode("Item Name"));
+
+    var headerQuantity = document.createElement("th");
+    headerQuantity.appendChild(document.createTextNode("Quantity"));
+
+    header.appendChild(headerName);
+    header.appendChild(headerQuantity);
+
+    return header;
+}
+
+function createTableEntry(itemName, quantity, container, storeInstance) {
+    var entry = document.createElement("tr");
+    entry.id = "tableEntry";
+
+    var entryName = document.createElement("td");
+    entryName.append(document.createTextNode(itemName));
+
+    var entryQuantity = document.createElement("td");
+
+    var increaseBtn = document.createElement("button");
+    increaseBtn.className = "cartTableAdd";
+    increaseBtn.onclick = function() {
+        storeInstance.addItemToCart(itemName);
+        renderCart(container, storeInstance);
+    };
+    increaseBtn.appendChild(document.createTextNode("+"));
+    entryQuantity.appendChild(increaseBtn);
+
+    entryQuantity.appendChild(document.createTextNode(quantity));
+
+    var decrease = document.createElement("button");
+    decrease.className = "cartTableAdd";
+    decrease.onclick = function() {
+        storeInstance.removeItemFromCart(itemName);
+        renderCart(container, storeInstance);
+    };
+    decrease.appendChild(document.createTextNode("-"));
+    entryQuantity.appendChild(decrease);
+
+    entry.appendChild(entryName);
+    entry.appendChild(entryQuantity);
+
+    return entry;
+}
+
+function createTotalEntry(storeInstance) {
+
+}
+
+document.addEventListener('keydown', function(event) {
+    if(event.keyCode === 27) {
+        hideCart();
+    }
+})
