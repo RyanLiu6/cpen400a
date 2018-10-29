@@ -72,6 +72,11 @@ body {
     color: #CBCBCB;
 }
 
+#cart-btn-wrapper {
+    display: inline-block;
+    width: 100%;
+}
+
 #btn-show-cart {
     background-color: #DDA0DD;
     color: white;
