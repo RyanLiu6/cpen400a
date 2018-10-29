@@ -217,7 +217,58 @@ body {
 #modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
+}
+
+#cartTable {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#cartTable th, #cartTable td {
+    padding: 8px;
+    text-align: center;
+}
+
+#tableHeader th, #tableEntry td {
+    border: 1px solid #ddd;
+}
+
+#tableHeader {
+    background-color: #F99D9D;
+}
+
+.cartTableAdd {
+    width: 5%;
+    background-color: #DDA0DD;
+    color: white;
+    border: none;
+    margin: 0 10%;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.cartTableRemove {
+    width: 5%;
+    background-color: #DDA0DD;
+    color: white;
+    border: none;
+    margin: 0 10%;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+#btn-hide-cart {
+    width: 3%;
+    background-color: #DDA0DD;
+    color: white;
+    border: none;
+    margin: 0 10%;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: 16px;
 }
