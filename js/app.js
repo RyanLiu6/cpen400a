@@ -193,7 +193,8 @@ function renderProductList(container, storeInstance) {
 
     if (container.firstChild === undefined) { 
         container.appendChild(productList);
-    } else {
+    } 
+    else {
         replaceContainerContent(container, productList);
     }
 
@@ -239,44 +240,8 @@ function renderProduct(container, storeInstance, itemName) {
             if(newRemoveBtn != null) {
                 container.append(newRemoveBtn);
             }
-
-            /*
-            var curBtns = container.getElementsByClassName("button");
-
-            var curAdd = null;
-            var curRemove = null;
-
-            for(var btn in curBtns) {
-                if(btn.id == ("btn-add-" + itemName)) {
-                    curAdd = btn;
-                }
-                else if(btn.id == ("btn-remove-" + itemName)) {
-                    curRemove = btn;
-                }
-            }
-
-            var currAdd = document.getElementById("btn-add-" + itemName);
-            if (currAdd == null) {
-                container.appendChild(btnArr[0]);
-            } else {
-                if (btnArr[1]) {
-                    container.replaceChild(btnArr[0], currAdd);
-                } else {
-                    container.removeChild(currAdd);
-                }
-            }
-
-            var currRemove = document.getElementById("btn-remove-" + itemName);
-            if (currRemove == null) {
-                container.appendChild(btnArr[2]);
-            } else {
-                if (btnArr[3]) {
-                    container.replaceChild(btnArr[2], currRemove);
-                } else {
-                    container.removeChild(currRemove);
-                }
-            }*/
-        } else {
+        } 
+        else {
             container.appendChild(newImg);
             container.appendChild(newName);
 
@@ -362,12 +327,12 @@ function renderCart(container, storeInstance) {
 
     var totalPrice = 0;
 
-    if(storeInstance !== undefined) {
-        for(var curKey in storeInstance.cart) {
+    if (storeInstance !== undefined) {
+        for (var curKey in storeInstance.cart) {
             var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
             var curQuantity = storeInstance.cart[curKey];
             
-            var curItemEntry = createTableEntry(curLabel, curQuantity, container, storeInstance);
+            var curItemEntry = createTableEntry(curKey, curLabel, curQuantity, storeInstance);
             tableDom.appendChild(curItemEntry);
 
             totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
@@ -377,7 +342,7 @@ function renderCart(container, storeInstance) {
     var totalEntry = createTotalEntry(totalPrice);
     tableDom.appendChild(totalEntry);
 
-    if(container.firstChild === undefined) {
+    if (container.firstChild === undefined) {
         container.appendChild(tableDom);
     }
     else {
@@ -409,12 +374,12 @@ function createTableHeader() {
     return header;
 }
 
-function createTableEntry(itemName, quantity, container, storeInstance) {
+function createTableEntry(itemName, itemLabel, quantity, storeInstance) {
     var entry = document.createElement("tr");
     entry.id = "tableEntry";
 
     var entryName = document.createElement("td");
-    entryName.append(document.createTextNode(itemName));
+    entryName.append(document.createTextNode(itemLabel));
 
     var entryQuantity = document.createElement("td");
 
@@ -422,7 +387,6 @@ function createTableEntry(itemName, quantity, container, storeInstance) {
     increaseBtn.className = "cartTableAdd";
     increaseBtn.onclick = function() {
         storeInstance.addItemToCart(itemName);
-        renderCart(container, storeInstance);
     };
     increaseBtn.appendChild(document.createTextNode("+"));
     entryQuantity.appendChild(increaseBtn);
@@ -433,7 +397,6 @@ function createTableEntry(itemName, quantity, container, storeInstance) {
     decrease.className = "cartTableRemove";
     decrease.onclick = function() {
         storeInstance.removeItemFromCart(itemName);
-        renderCart(container, storeInstance);
     };
     decrease.appendChild(document.createTextNode("-"));
     entryQuantity.appendChild(decrease);
