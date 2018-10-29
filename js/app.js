@@ -95,8 +95,6 @@ var inactiveTime = 0;
 // Dynamic generation
 var productClasses = ["productImg", "productName", "btn-add", "btn-remove"];
 
-// First creation of buttons
-var domsCreated = false;
 /*******************************************************************************
 ********************** Store Object and related functions **********************
 *******************************************************************************/
@@ -247,32 +245,27 @@ function sendHelp() {
 // storeInstance: instance of Store
 function renderProductList(container, storeInstance) {
     // Check if productList exists
-    var createdList = false;
-    var productList = document.getElementById(PRODUCT_LIST);
-    if (productList == null) {
-        productList = document.createElement("ul");
-        productList.id = PRODUCT_LIST;
-        productList.style.listStyle = "none";
-        createdList = true;
-    }
 
-    // Set the contents of container
-    for (var i = 0; i < NUM_PRODUCTS; i++) {
+    var productList = document.createElement("ul");
+    productList.id = PRODUCT_LIST;
+    productList.style.listStyle = "none";
+
+    var stock = storeInstance.stock;
+    for(var key in stock) {
         var productDom = document.createElement("li");
-        productDom.id = "product-" + prodId[i];
+        productDom.id = "product-" + key;
         productDom.className = "product";
 
-        renderProduct(productDom, storeInstance, prodId[i]);
+        renderProduct(productDom, storeInstance, key);
 
         productList.appendChild(productDom);
     }
 
-    domsCreated = true;
-
-    if (createdList) {
+    var oldProductList = container.getElementsByClassName("ul")[0];
+    if (oldProductList === undefined) {
         container.appendChild(productList);
     } else {
-        container.replaceChild(productList, document.getElementById(PRODUCT_LIST));
+        container.replaceChild(productList, oldProductList);
     }
 
     console.log(productList);
@@ -300,14 +293,14 @@ function renderProduct(container, storeInstance, itemName) {
         // If created, update em
         // Else, append to container
 
-        var img = container.getElementsByClassName("productImg");
-        if (img.length > 0) {
+        if (container.firstChild != undefined) {
             // Product Image
-            var currImg = document.getElementById("prodImg-" + itemName);
-            container.replaceChild(newImg, currImg);
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
 
-            var currName = document.getElementById("displayName-" + itemName);
-            container.replaceChild(newName, currName);
+            container.appendChild(newImg);
+            container.appendChild(newName);
 
             var currAdd = document.getElementById("btn-add-" + itemName);
             if (currAdd == null) {
