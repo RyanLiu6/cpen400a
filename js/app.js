@@ -191,12 +191,11 @@ function renderProductList(container, storeInstance) {
         productList.appendChild(productDom);
     }
 
-    if (container.firstChild === undefined) { 
-        container.appendChild(productList);
+    if (container.firstChild != undefined) { 
+        cleanContainer(container);
     } 
-    else {
-        replaceContainerContent(container, productList);
-    }
+
+    container.appendChild(productList);
 
     console.log(productList);
 }
@@ -216,42 +215,26 @@ function renderProduct(container, storeInstance, itemName) {
         var newName = createNameDom(itemName, currItem);
 
         // Create buttons dom
-        btnArr = createButtonsDom(itemName, storeInstance, currItem);
+        var btnArr = createButtonsDom(itemName, storeInstance, currItem);
+        var newAddBtn = btnArr[0];
+        var newRemoveBtn = btnArr[1];
 
         // If created, update em
         // Else, append to container
 
         if (container.firstChild != undefined) {
-            // Product Image
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-
-            container.appendChild(newImg);
-            container.appendChild(newName);
-
-            var newAddBtn = btnArr[0];
-            var newRemoveBtn = btnArr[2];
-
-            if(newAddBtn != null) {
-                container.append(newAddBtn);
-            }
-            
-            if(newRemoveBtn != null) {
-                container.append(newRemoveBtn);
-            }
+            cleanContainer(container);
         } 
-        else {
-            container.appendChild(newImg);
-            container.appendChild(newName);
 
-            if (btnArr[1]) {
-                container.appendChild(btnArr[0]);
-            }
+        container.appendChild(newImg);
+        container.appendChild(newName);
 
-            if (btnArr[3]) {
-                container.appendChild(btnArr[2]);
-            }
+        if (newAddBtn != null) {
+            container.appendChild(newAddBtn);
+        }
+
+        if (newRemoveBtn != null) {
+            container.appendChild(newRemoveBtn);
         }
     }
 }
@@ -285,8 +268,6 @@ function createNameDom(itemName, currItem) {
 }
 
 function createButtonsDom(itemName, storeInstance, currItem) {
-    var stockFlag = false;
-    var cartFlag = false;
     var btnAdd = null;
     var btnRemove = null;
 
@@ -298,7 +279,6 @@ function createButtonsDom(itemName, storeInstance, currItem) {
             storeInstance.addItemToCart(itemName);
         };
         btnAdd.appendChild(document.createTextNode("Add to Cart"));
-        stockFlag = true;
     }
 
     if (itemName in storeInstance.cart && storeInstance.cart[itemName] > 0) {
@@ -309,10 +289,9 @@ function createButtonsDom(itemName, storeInstance, currItem) {
             storeInstance.removeItemFromCart(itemName);
         };
         btnRemove.appendChild(document.createTextNode("Remove from Cart"));
-        cartFlag = true;
     }
 
-    return [btnAdd, stockFlag, btnRemove, cartFlag];
+    return [btnAdd, btnRemove];
 }
 
 /*******************************************************************************
@@ -327,7 +306,7 @@ function renderCart(container, storeInstance) {
 
     var totalPrice = 0;
 
-    if (storeInstance !== undefined) {
+    if (storeInstance != undefined) {
         for (var curKey in storeInstance.cart) {
             var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
             var curQuantity = storeInstance.cart[curKey];
@@ -342,20 +321,17 @@ function renderCart(container, storeInstance) {
     var totalEntry = createTotalEntry(totalPrice);
     tableDom.appendChild(totalEntry);
 
-    if (container.firstChild === undefined) {
-        container.appendChild(tableDom);
+    if (container.firstChild != undefined) {
+        cleanContainer(container);
     }
-    else {
-        replaceContainerContent(container, tableDom);
-    }
+
+    container.appendChild(tableDom);
 }
 
-function replaceContainerContent(container, content) {
+function cleanContainer(container) {
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
-
-    container.appendChild(content);
 }
 
 function createTableHeader() {
