@@ -8,86 +8,17 @@ var IMAGE_BASE_URL = "images/";
 var PRODUCT_LIST = "productList";
 
 // Product Information - could be replaced with document.getElementBy ...
-var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "KeyboardCombo", "Mice",
-"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
+var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "Jeans", "Keyboard", "KeyboardCombo", "Mice",
+"PC1", "PC2", "PC3", "Tent"];
 
-var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Keyboard Combo", "Mice",
-"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
+var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Jeans", "Keyboard", "Keyboard Combo", "Mice",
+"PC1", "PC2", "PC3", "Tent"];
 
 var prodURL = ["Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
-"Clothes2_$30.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
-"PC2_$400.png", "PC3_$300.png", "Tent_$100.png", "Jeans_$50.png", "Keyboard_$20.png"];
+"Clothes2_$30.png", "Jeans_$50.png", "Keyboard_$20.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
+"PC2_$400.png", "PC3_$300.png", "Tent_$100.png"];
 
-var prodPrice = [10, 5, 20, 100, 40, 20, 350, 400, 300, 100, 50, 20];
-
-var products = {
-    Box1: {
-        label: "Box 1",
-        imageUrl: "Box1_$10.png",
-        price: 10,
-        quantity: 5
-    },
-    Box2: {
-        label: "Box 2",
-        imageUrl: "Box2_$5.png",
-        price: 5,
-        quantity: 5
-    },
-    Clothes1: {
-        label: "Clothes 1",
-        imageUrl: "Clothes1_$20.png",
-        price: 20,
-        quantity: 5
-    },
-    Clothes2: {
-        label: "Clothes 2",
-        imageUrl: "Clothes2_$30.png",
-        price: 100,
-        quantity: 5
-    },
-    KeyboardCombo: {
-        label: "Keyboard Combo",
-        imageUrl: "KeyboardCombo_$40.png",
-        price: 40,
-        quantity: 5
-    },
-    PC1: {
-        label: "PC1",
-        imageUrl: "PC1_$350.png",
-        price: 350,
-        quantity: 5
-    },
-    PC2: {
-        label: "PC2",
-        imageUrl: "PC2_$400.png",
-        price: 400,
-        quantity: 5
-    },
-    PC3: {
-        label: "PC3",
-        imageUrl: "PC3_$300.png",
-        price: 300,
-        quantity: 5
-    },
-    Tent: {
-        label: "Tent",
-        imageUrl: "Tent_$100.png",
-        price: 100,
-        quantity: 5
-    },
-    Jeans: {
-        label: "Jeans",
-        imageUrl: "Jeans_$50.png",
-        price: 50,
-        quantity: 5
-    },
-    Keyboard: {
-        label: "Keyboard",
-        imageUrl: "Keyboard_$20.png",
-        price: 20,
-        quantity: 5
-    }
-}
+var prodPrice = [10, 5, 20, 100, 50, 20, 40, 20, 350, 400, 300, 100];
 
 // Inactivity to alert User
 var inactiveTime = 0;
@@ -245,7 +176,6 @@ function sendHelp() {
 // storeInstance: instance of Store
 function renderProductList(container, storeInstance) {
     // Check if productList exists
-
     var productList = document.createElement("ul");
     productList.id = PRODUCT_LIST;
     productList.style.listStyle = "none";
@@ -261,11 +191,10 @@ function renderProductList(container, storeInstance) {
         productList.appendChild(productDom);
     }
 
-    var oldProductList = container.getElementsByClassName("ul")[0];
-    if (oldProductList === undefined) {
+    if (container.firstChild === undefined) { 
         container.appendChild(productList);
     } else {
-        container.replaceChild(productList, oldProductList);
+        replaceContainerContent(container, productList);
     }
 
     console.log(productList);
@@ -277,8 +206,6 @@ function renderProductList(container, storeInstance) {
 function renderProduct(container, storeInstance, itemName) {
     // Check if itemName is in stocks
     var currItem = storeInstance.stock[itemName];
-    var stockFlag = false;
-    var cartFlag = false;
 
     if (currItem != undefined) {
         // Create prodImg dom
@@ -302,6 +229,32 @@ function renderProduct(container, storeInstance, itemName) {
             container.appendChild(newImg);
             container.appendChild(newName);
 
+            var newAddBtn = btnArr[0];
+            var newRemoveBtn = btnArr[2];
+
+            if(newAddBtn != null) {
+                container.append(newAddBtn);
+            }
+            
+            if(newRemoveBtn != null) {
+                container.append(newRemoveBtn);
+            }
+
+            /*
+            var curBtns = container.getElementsByClassName("button");
+
+            var curAdd = null;
+            var curRemove = null;
+
+            for(var btn in curBtns) {
+                if(btn.id == ("btn-add-" + itemName)) {
+                    curAdd = btn;
+                }
+                else if(btn.id == ("btn-remove-" + itemName)) {
+                    curRemove = btn;
+                }
+            }
+
             var currAdd = document.getElementById("btn-add-" + itemName);
             if (currAdd == null) {
                 container.appendChild(btnArr[0]);
@@ -322,7 +275,7 @@ function renderProduct(container, storeInstance, itemName) {
                 } else {
                     container.removeChild(currRemove);
                 }
-            }
+            }*/
         } else {
             container.appendChild(newImg);
             container.appendChild(newName);
@@ -369,10 +322,11 @@ function createNameDom(itemName, currItem) {
 function createButtonsDom(itemName, storeInstance, currItem) {
     var stockFlag = false;
     var cartFlag = false;
-    var btnAdd = document.createElement("button");
-    var btnRemove = document.createElement("button");
+    var btnAdd = null;
+    var btnRemove = null;
 
     if (currItem[PRODUCT_QUANTITY] > 0) {
+        btnAdd = document.createElement("button");
         btnAdd.className = "btn-add";
         btnAdd.id = "btn-add-" + itemName;
         btnAdd.onclick = function () {
@@ -382,7 +336,8 @@ function createButtonsDom(itemName, storeInstance, currItem) {
         stockFlag = true;
     }
 
-    if (itemName in storeInstance.cart) {
+    if (itemName in storeInstance.cart && storeInstance.cart[itemName] > 0) {
+        btnRemove = document.createElement("button");
         btnRemove.className = "btn-remove";
         btnRemove.id = "btn-remove-" + itemName;
         btnRemove.onclick = function() {
@@ -394,12 +349,6 @@ function createButtonsDom(itemName, storeInstance, currItem) {
 
     return [btnAdd, stockFlag, btnRemove, cartFlag];
 }
-
-// container: DOM element ->
-// storeInstance: instance of Store
-// function renderCart(container, storeInstance) {
-//
-// }
 
 /*******************************************************************************
 **************************** Cart Render Functions *****************************
@@ -432,11 +381,11 @@ function renderCart(container, storeInstance) {
         container.appendChild(tableDom);
     }
     else {
-        replaceCart(container, tableDom);
+        replaceContainerContent(container, tableDom);
     }
 }
 
-function replaceCart(container, content) {
+function replaceContainerContent(container, content) {
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
@@ -481,7 +430,7 @@ function createTableEntry(itemName, quantity, container, storeInstance) {
     entryQuantity.appendChild(document.createTextNode(quantity));
 
     var decrease = document.createElement("button");
-    decrease.className = "cartTableAdd";
+    decrease.className = "cartTableRemove";
     decrease.onclick = function() {
         storeInstance.removeItemFromCart(itemName);
         renderCart(container, storeInstance);
