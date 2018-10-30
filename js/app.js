@@ -133,7 +133,7 @@ window.setInterval(checkInactivity, 1000);
 
 // Function to initialize products
 function initProd() {
-    // Total number of products is 11
+    // Total number of products is 12
     for (var i = 0; i < NUM_PRODUCTS; i++) {
         var prod = [];
         prod[PRODUCT_LABEL] = prodLabel[i];
@@ -170,18 +170,21 @@ function sendHelp() {
 }
 
 /*******************************************************************************
-******************************* Render Functions *******************************
+************************** Product Render Functions ****************************
 *******************************************************************************/
 // container: DOM element -> productView div
 // storeInstance: instance of Store
 function renderProductList(container, storeInstance) {
-    // Check if productList exists
+    // create a new ul element
     var productList = document.createElement("ul");
     productList.id = PRODUCT_LIST;
     productList.style.listStyle = "none";
 
+    // iterate through all avaialble products in the store
     var stock = storeInstance.stock;
     for(var key in stock) {
+        // create a new li element and use it as container for
+        // the product to be rendered in
         var productDom = document.createElement("li");
         productDom.id = "product-" + key;
         productDom.className = "product";
@@ -191,6 +194,8 @@ function renderProductList(container, storeInstance) {
         productList.appendChild(productDom);
     }
 
+    // if the current container already contains any other elements
+    // clear the container
     if (container.firstChild != undefined) { 
         cleanContainer(container);
     } 
@@ -204,7 +209,7 @@ function renderProductList(container, storeInstance) {
 // storeInstance: instance of Store
 // itemName: name of a product
 function renderProduct(container, storeInstance, itemName) {
-    // Check if itemName is in stocks
+    // get the item and check if it exists
     var currItem = storeInstance.stock[itemName];
 
     if (currItem != undefined) {
@@ -219,16 +224,17 @@ function renderProduct(container, storeInstance, itemName) {
         var newAddBtn = btnArr[0];
         var newRemoveBtn = btnArr[1];
 
-        // If created, update em
-        // Else, append to container
-
+        // if the current container already contains any other elements
+        // clear the container
         if (container.firstChild != undefined) {
             cleanContainer(container);
         } 
 
+        // append all the image and item name
         container.appendChild(newImg);
         container.appendChild(newName);
 
+        // append button if it is available/created
         if (newAddBtn != null) {
             container.appendChild(newAddBtn);
         }
@@ -271,6 +277,7 @@ function createButtonsDom(itemName, storeInstance, currItem) {
     var btnAdd = null;
     var btnRemove = null;
 
+    // only create add button if the item is still in stock
     if (currItem[PRODUCT_QUANTITY] > 0) {
         btnAdd = document.createElement("button");
         btnAdd.className = "btn-add";
@@ -281,6 +288,7 @@ function createButtonsDom(itemName, storeInstance, currItem) {
         btnAdd.appendChild(document.createTextNode("Add to Cart"));
     }
 
+    // only create remove button if 1 or more of the item has been added to cart
     if (itemName in storeInstance.cart && storeInstance.cart[itemName] > 0) {
         btnRemove = document.createElement("button");
         btnRemove.className = "btn-remove";
@@ -291,6 +299,7 @@ function createButtonsDom(itemName, storeInstance, currItem) {
         btnRemove.appendChild(document.createTextNode("Remove from Cart"));
     }
 
+    // return both buttons in array
     return [btnAdd, btnRemove];
 }
 
@@ -298,15 +307,18 @@ function createButtonsDom(itemName, storeInstance, currItem) {
 **************************** Cart Render Functions *****************************
 *******************************************************************************/
 function renderCart(container, storeInstance) {
+    // create new table element
     var tableDom = document.createElement("table");
     tableDom.id = "cartTable";
 
+    // create and append table headers
     var header = createTableHeader();
     tableDom.appendChild(header);
 
     var totalPrice = 0;
 
     if (storeInstance != undefined) {
+        // iterate through all items in the cart and create table entry based on it
         for (var curKey in storeInstance.cart) {
             var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
             var curQuantity = storeInstance.cart[curKey];
@@ -314,10 +326,12 @@ function renderCart(container, storeInstance) {
             var curItemEntry = createTableEntry(curKey, curLabel, curQuantity, storeInstance);
             tableDom.appendChild(curItemEntry);
 
+            // keep record of the total price
             totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
         }
     }
 
+    // render the total price as a table entry
     var totalEntry = createTotalEntry(totalPrice);
     tableDom.appendChild(totalEntry);
 
@@ -329,6 +343,7 @@ function renderCart(container, storeInstance) {
 }
 
 function cleanContainer(container) {
+    // cleanup by removeing all children from container
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
@@ -359,6 +374,7 @@ function createTableEntry(itemName, itemLabel, quantity, storeInstance) {
 
     var entryQuantity = document.createElement("td");
 
+    // create +/- buttons and attach corresponding event handlers
     var increaseBtn = document.createElement("button");
     increaseBtn.className = "cartTableAdd";
     increaseBtn.onclick = function() {
@@ -399,7 +415,11 @@ function createTotalEntry(total) {
     return totalEntry;
 }
 
+/*******************************************************************************
+******************************* Event Handlers *********************************
+*******************************************************************************/
 document.addEventListener('keydown', function(event) {
+    // respond to esc (key code 27)
     if(event.keyCode === 27) {
         hideCart();
     }
