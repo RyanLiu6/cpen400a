@@ -4,22 +4,27 @@ var PRODUCT_LABEL = "label";
 var PRODUCT_IMGURL = "imageUrl";
 var PRODUCT_PRICE = "price";
 var PRODUCT_QUANTITY = "quantity";
+var IMAGE_BASE_URL = "images/";
+var PRODUCT_LIST = "productList";
 
 // Product Information - could be replaced with document.getElementBy ...
-var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "KeyboardCombo", "Mice",
-"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
+var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "Jeans", "Keyboard", "KeyboardCombo", "Mice",
+"PC1", "PC2", "PC3", "Tent"];
 
-var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Keyboard Combo", "Mice",
-"PC1", "PC2", "PC3", "Tent", "Jeans", "Keyboard"];
+var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Jeans", "Keyboard", "Keyboard Combo", "Mice",
+"PC1", "PC2", "PC3", "Tent"];
 
 var prodURL = ["Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
-"Clothes2_$30.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
-"PC2_$400.png", "PC3_$300.png", "Tent_$100.png", "Jeans_$50.png", "Keyboard_$20.png"];
+"Clothes2_$30.png", "Jeans_$50.png", "Keyboard_$20.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
+"PC2_$400.png", "PC3_$300.png", "Tent_$100.png"];
 
-var prodPrice = [10, 5, 20, 100, 40, 20, 350, 400, 300, 100, 50, 20];
+var prodPrice = [10, 5, 20, 100, 50, 20, 40, 20, 350, 400, 300, 100];
 
 // Inactivity to alert User
-var inactiveTime = 0
+var inactiveTime = 0;
+
+// Dynamic generation
+var productClasses = ["productImg", "productName", "btn-add", "btn-remove"];
 
 /*******************************************************************************
 ********************** Store Object and related functions **********************
@@ -27,6 +32,7 @@ var inactiveTime = 0
 var Store = function(initialStock) {
     this.stock = initialStock;
     this.cart = [];
+    this.onUpdate = null;
 }
 
 // Adds an item to the shopping cart
@@ -46,6 +52,9 @@ Store.prototype.addItemToCart = function(itemName) {
 
             // Decrement from stock
             this.stock[itemName][PRODUCT_QUANTITY]--;
+
+            // Updating view
+            this.onUpdate(itemName);
         } else {
             var err = "Item " + itemName + " is out of stock. Please select another item.";
             alert(err);
@@ -75,29 +84,28 @@ Store.prototype.removeItemFromCart = function(itemName) {
         alert(err);
     }
 
+    // Updating view
+    this.onUpdate(itemName);
+
     // Reset Inactivity
     resetInactivity();
 }
 
 // Shows the cart to the user
-function showCart(cart) {
+function showCart(store) {
     console.log("Show Cart to User");
-    var userCart = "";
 
-    for (var key in cart) {
-        userCart += key + " : ";
-        userCart += cart[key];
-        userCart += "\n";
-    }
+    var modalContent = document.getElementById("modal-content");
+    renderCart(modalContent, store);
 
-    alert(userCart);
+    document.getElementById("modal").style.visibility = "visible";
 
     // Reset Inactivity
     resetInactivity();
 }
 
-Store.prototype.print = function() {
-    console.log("Send Help");
+function hideCart() {
+    document.getElementById("modal").style.visibility = "hidden";
 }
 
 // Products catalogue object
@@ -108,6 +116,13 @@ initProd();
 
 // Store object
 var store = new Store(products);
+store.onUpdate = function(itemName) {
+    console.log(document.getElementById("product-" + itemName));
+    renderProduct(document.getElementById("product-" + itemName), this, itemName);
+
+    var modalContainer = document.getElementById("modal-content");
+    renderCart(modalContainer, this);
+}
 
 /*******************************************************************************
 ******************************** Misc Functions ********************************
@@ -118,7 +133,7 @@ window.setInterval(checkInactivity, 1000);
 
 // Function to initialize products
 function initProd() {
-    // Total number of products is 11
+    // Total number of products is 12
     for (var i = 0; i < NUM_PRODUCTS; i++) {
         var prod = [];
         prod[PRODUCT_LABEL] = prodLabel[i];
@@ -142,15 +157,270 @@ function resetInactivity() {
 
 // Function to check the timeout
 function checkInactivity() {
-    if (inactiveTime >= 30) {
+    if (inactiveTime >= 1800) {
         // Checking if the User is still active
         // using Alert
         alert("Hey there! Are you still planning to buy something?");
         resetInactivity();
-
-        // Using confirm
-        // if (confirm("Hey there! Are you still planning to buy something?")) {
-        //     resetInactivity();
-        // }
     }
 }
+
+function sendHelp() {
+    console.log("send help");
+}
+
+/*******************************************************************************
+************************** Product Render Functions ****************************
+*******************************************************************************/
+// container: DOM element -> productView div
+// storeInstance: instance of Store
+function renderProductList(container, storeInstance) {
+    // create a new ul element
+    var productList = document.createElement("ul");
+    productList.id = PRODUCT_LIST;
+    productList.style.listStyle = "none";
+
+    // iterate through all avaialble products in the store
+    var stock = storeInstance.stock;
+    for(var key in stock) {
+        // create a new li element and use it as container for
+        // the product to be rendered in
+        var productDom = document.createElement("li");
+        productDom.id = "product-" + key;
+        productDom.className = "product";
+
+        renderProduct(productDom, storeInstance, key);
+
+        productList.appendChild(productDom);
+    }
+
+    // if the current container already contains any other elements
+    // clear the container
+    if (container.firstChild != undefined) { 
+        cleanContainer(container);
+    } 
+
+    container.appendChild(productList);
+
+    console.log(productList);
+}
+
+// container: DOM element -> list element w/ id="product-<itemName>"
+// storeInstance: instance of Store
+// itemName: name of a product
+function renderProduct(container, storeInstance, itemName) {
+    // get the item and check if it exists
+    var currItem = storeInstance.stock[itemName];
+
+    if (currItem != undefined) {
+        // Create prodImg dom
+        var newImg = createImageDom(itemName, currItem);
+
+        // Create name dom
+        var newName = createNameDom(itemName, currItem);
+
+        // Create buttons dom
+        var btnArr = createButtonsDom(itemName, storeInstance, currItem);
+        var newAddBtn = btnArr[0];
+        var newRemoveBtn = btnArr[1];
+
+        // if the current container already contains any other elements
+        // clear the container
+        if (container.firstChild != undefined) {
+            cleanContainer(container);
+        } 
+
+        // append all the image and item name
+        container.appendChild(newImg);
+        container.appendChild(newName);
+
+        // append button if it is available/created
+        if (newAddBtn != null) {
+            container.appendChild(newAddBtn);
+        }
+
+        if (newRemoveBtn != null) {
+            container.appendChild(newRemoveBtn);
+        }
+    }
+}
+
+function createImageDom(itemName, currItem) {
+    // Creating productImg div dom
+    var imgDom = document.createElement("img");
+    var priceDom = document.createElement("h2");
+    var prodImgDom = document.createElement("div");
+
+    imgDom.src = IMAGE_BASE_URL + currItem[PRODUCT_IMGURL];
+    var priceText = document.createElement("span");
+    priceText.appendChild(document.createTextNode("$" + currItem[PRODUCT_PRICE].toString()));
+    priceDom.appendChild(priceText);
+
+    prodImgDom.className = "productImg";
+    prodImgDom.id = "prodImg-" + itemName;
+    prodImgDom.appendChild(imgDom);
+    prodImgDom.appendChild(priceDom);
+
+    return prodImgDom;
+}
+
+function createNameDom(itemName, currItem) {
+    // Creating the item name dom
+    var nameDom = document.createElement("h2");
+    nameDom.appendChild(document.createTextNode(currItem[PRODUCT_LABEL].toString()));
+    nameDom.id = "displayName-" + itemName;
+
+    return nameDom;
+}
+
+function createButtonsDom(itemName, storeInstance, currItem) {
+    var btnAdd = null;
+    var btnRemove = null;
+
+    // only create add button if the item is still in stock
+    if (currItem[PRODUCT_QUANTITY] > 0) {
+        btnAdd = document.createElement("button");
+        btnAdd.className = "btn-add";
+        btnAdd.id = "btn-add-" + itemName;
+        btnAdd.onclick = function () {
+            storeInstance.addItemToCart(itemName);
+        };
+        btnAdd.appendChild(document.createTextNode("Add to Cart"));
+    }
+
+    // only create remove button if 1 or more of the item has been added to cart
+    if (itemName in storeInstance.cart && storeInstance.cart[itemName] > 0) {
+        btnRemove = document.createElement("button");
+        btnRemove.className = "btn-remove";
+        btnRemove.id = "btn-remove-" + itemName;
+        btnRemove.onclick = function() {
+            storeInstance.removeItemFromCart(itemName);
+        };
+        btnRemove.appendChild(document.createTextNode("Remove from Cart"));
+    }
+
+    // return both buttons in array
+    return [btnAdd, btnRemove];
+}
+
+/*******************************************************************************
+**************************** Cart Render Functions *****************************
+*******************************************************************************/
+function renderCart(container, storeInstance) {
+    // create new table element
+    var tableDom = document.createElement("table");
+    tableDom.id = "cartTable";
+
+    // create and append table headers
+    var header = createTableHeader();
+    tableDom.appendChild(header);
+
+    var totalPrice = 0;
+
+    if (storeInstance != undefined) {
+        // iterate through all items in the cart and create table entry based on it
+        for (var curKey in storeInstance.cart) {
+            var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
+            var curQuantity = storeInstance.cart[curKey];
+            
+            var curItemEntry = createTableEntry(curKey, curLabel, curQuantity, storeInstance);
+            tableDom.appendChild(curItemEntry);
+
+            // keep record of the total price
+            totalPrice += curQuantity * storeInstance.stock[curKey][PRODUCT_PRICE];
+        }
+    }
+
+    // render the total price as a table entry
+    var totalEntry = createTotalEntry(totalPrice);
+    tableDom.appendChild(totalEntry);
+
+    if (container.firstChild != undefined) {
+        cleanContainer(container);
+    }
+
+    container.appendChild(tableDom);
+}
+
+function cleanContainer(container) {
+    // cleanup by removeing all children from container
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+function createTableHeader() {
+    var header = document.createElement("tr");
+    header.id = "tableHeader";
+    
+    var headerName = document.createElement("th");
+    headerName.appendChild(document.createTextNode("Item Name"));
+
+    var headerQuantity = document.createElement("th");
+    headerQuantity.appendChild(document.createTextNode("Quantity"));
+
+    header.appendChild(headerName);
+    header.appendChild(headerQuantity);
+
+    return header;
+}
+
+function createTableEntry(itemName, itemLabel, quantity, storeInstance) {
+    var entry = document.createElement("tr");
+    entry.id = "tableEntry";
+
+    var entryName = document.createElement("td");
+    entryName.append(document.createTextNode(itemLabel));
+
+    var entryQuantity = document.createElement("td");
+
+    // create +/- buttons and attach corresponding event handlers
+    var increaseBtn = document.createElement("button");
+    increaseBtn.className = "cartTableAdd";
+    increaseBtn.onclick = function() {
+        storeInstance.addItemToCart(itemName);
+    };
+    increaseBtn.appendChild(document.createTextNode("+"));
+    entryQuantity.appendChild(increaseBtn);
+
+    entryQuantity.appendChild(document.createTextNode(quantity));
+
+    var decrease = document.createElement("button");
+    decrease.className = "cartTableRemove";
+    decrease.onclick = function() {
+        storeInstance.removeItemFromCart(itemName);
+    };
+    decrease.appendChild(document.createTextNode("-"));
+    entryQuantity.appendChild(decrease);
+
+    entry.appendChild(entryName);
+    entry.appendChild(entryQuantity);
+
+    return entry;
+}
+
+function createTotalEntry(total) {
+    var totalEntry = document.createElement("tr");
+    totalEntry.id = "totalPrice";
+    
+    var totalTag = document.createElement("th");
+    totalTag.appendChild(document.createTextNode("Total"));
+
+    var totalPrice = document.createElement("th");
+    totalPrice.appendChild(document.createTextNode("$" + total));
+
+    totalEntry.appendChild(totalTag);
+    totalEntry.appendChild(totalPrice);
+
+    return totalEntry;
+}
+
+/*******************************************************************************
+******************************* Event Handlers *********************************
+*******************************************************************************/
+document.addEventListener('keydown', function(event) {
+    // respond to esc (key code 27)
+    if(event.keyCode === 27) {
+        hideCart();
+    }
+})
