@@ -1,37 +1,25 @@
 // Global Variables for access
-var NUM_PRODUCTS = 12;
 var PRODUCT_LABEL = "label";
 var PRODUCT_IMGURL = "imageUrl";
 var PRODUCT_PRICE = "price";
 var PRODUCT_QUANTITY = "quantity";
-var IMAGE_BASE_URL = "images/";
-var PRODUCT_LIST = "productList";
 
-// Product Information - could be replaced with document.getElementBy ...
-var prodId = ["Box1", "Box2", "Clothes1", "Clothes2", "Jeans", "Keyboard", "KeyboardCombo", "Mice",
-"PC1", "PC2", "PC3", "Tent"];
-
-var prodLabel = ["Box 1", "Box 2", "Clothes 1", "Clothes 2", "Jeans", "Keyboard", "Keyboard Combo", "Mice",
-"PC1", "PC2", "PC3", "Tent"];
-
-var prodURL = ["Box1_$10.png", "Box2_$5.png", "Clothes1_$20.png",
-"Clothes2_$30.png", "Jeans_$50.png", "Keyboard_$20.png", "KeyboardCombo_$40.png", "Mice_$20.png", "PC1_$350.png",
-"PC2_$400.png", "PC3_$300.png", "Tent_$100.png"];
-
-var prodPrice = [10, 5, 20, 100, 50, 20, 40, 20, 350, 400, 300, 100];
+// Number of tries
+var NUM_TRIES = 3;
 
 // Inactivity to alert User
 var inactiveTime = 0;
 
-// Dynamic generation
-var productClasses = ["productImg", "productName", "btn-add", "btn-remove"];
+// Class Server URL
+var classUrl = "https://cpen400a-bookstore.herokuapp.com";
 
 /*******************************************************************************
 ********************** Store Object and related functions **********************
 *******************************************************************************/
-var Store = function(initialStock) {
-    this.stock = initialStock;
+var Store = function(serverUrl) {
+    this.serverUrl = serverUrl;
     this.cart = [];
+    this.stock = {};
     this.onUpdate = null;
 }
 
@@ -91,6 +79,40 @@ Store.prototype.removeItemFromCart = function(itemName) {
     resetInactivity();
 }
 
+Store.prototype.syncWithServer = function(onSync) {
+    delta = {};
+
+    ajaxGet(this.serverUrl + "/products",
+            function(response) {
+                onSuccess.call(store, response);
+            },
+
+            function(error) {
+                console.log("wat do");
+            },
+
+            NUM_TRIES
+    );
+
+    if (onSync != undefined) {
+        onSync(delta);
+    }
+}
+
+function onSuccess(response) {
+    console.log(response);
+    console.log(this);
+    // Check if we have stocks yet
+    if (Object.keys(this.stock).length === 0 && this.stock.constructor === Object) {
+        this.stock = response;
+        this.onUpdate();
+    }
+    // else {
+    //
+    //     this.onUpdate();
+    // }
+}
+
 // Shows the cart to the user
 function showCart(store) {
     console.log("Show Cart to User");
@@ -108,20 +130,56 @@ function hideCart() {
     document.getElementById("modal").style.visibility = "hidden";
 }
 
-// Products catalogue object
-var products = [];
-
-// Initializing products
-initProd();
-
 // Store object
-var store = new Store(products);
-store.onUpdate = function(itemName) {
-    console.log(document.getElementById("product-" + itemName));
-    renderProduct(document.getElementById("product-" + itemName), this, itemName);
+var store = new Store(classUrl);
+store.syncWithServer();
 
-    var modalContainer = document.getElementById("modal-content");
-    renderCart(modalContainer, this);
+store.onUpdate = function(itemName) {
+    if (itemName == undefined) {
+        var productView = document.getElementById("productView");
+        renderProductList(productView, store);
+    }
+    else {
+        renderProduct(document.getElementById("product-" + itemName), this, itemName);
+
+        var modalContainer = document.getElementById("modal-content");
+        renderCart(modalContainer, this);
+    }
+}
+
+/*******************************************************************************
+******************************** AJAXs Functions ********************************
+*******************************************************************************/
+function ajaxGet(url, onSuccess, onError, iteration) {
+    if (iteration == 0) {
+        onError();
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+
+    // Both success and Error -> must check status to label response
+    xhr.onloadend = function() {
+        if (xhr.status == 500) {
+            recurse(iteration);
+        }
+        else {
+            onSuccess(JSON.parse(xhr.response));
+        }
+    }
+
+    // Timeout
+    xhr.ontimeout = function (e) {
+        recurse(iteration);
+    }
+
+    // Recursive function for purposes of checking number of tries
+    var recurse = function(currIteration) {
+        console.log("Iteration: " + (-1 * (currIteration - NUM_TRIES).toString()));
+        ajaxGet(url, onSuccess, onError, currIteration - 1);
+    }
+
+    xhr.send();
 }
 
 /*******************************************************************************
@@ -130,20 +188,6 @@ store.onUpdate = function(itemName) {
 // Call incInactivity and checkInactivity every second
 window.setInterval(incInactivity, 1000);
 window.setInterval(checkInactivity, 1000);
-
-// Function to initialize products
-function initProd() {
-    // Total number of products is 12
-    for (var i = 0; i < NUM_PRODUCTS; i++) {
-        var prod = [];
-        prod[PRODUCT_LABEL] = prodLabel[i];
-        prod[PRODUCT_IMGURL] = prodURL[i];
-        prod[PRODUCT_PRICE] = prodPrice[i];
-        prod[PRODUCT_QUANTITY] = 5;
-
-        products[prodId[i]] = prod;
-    }
-}
 
 // Increments inactiveTime every second
 function incInactivity() {
@@ -177,7 +221,6 @@ function sendHelp() {
 function renderProductList(container, storeInstance) {
     // create a new ul element
     var productList = document.createElement("ul");
-    productList.id = PRODUCT_LIST;
     productList.style.listStyle = "none";
 
     // iterate through all avaialble products in the store
@@ -196,9 +239,9 @@ function renderProductList(container, storeInstance) {
 
     // if the current container already contains any other elements
     // clear the container
-    if (container.firstChild != undefined) { 
+    if (container.firstChild != undefined) {
         cleanContainer(container);
-    } 
+    }
 
     container.appendChild(productList);
 
@@ -228,7 +271,7 @@ function renderProduct(container, storeInstance, itemName) {
         // clear the container
         if (container.firstChild != undefined) {
             cleanContainer(container);
-        } 
+        }
 
         // append all the image and item name
         container.appendChild(newImg);
@@ -251,7 +294,7 @@ function createImageDom(itemName, currItem) {
     var priceDom = document.createElement("h2");
     var prodImgDom = document.createElement("div");
 
-    imgDom.src = IMAGE_BASE_URL + currItem[PRODUCT_IMGURL];
+    imgDom.src = currItem[PRODUCT_IMGURL];
     var priceText = document.createElement("span");
     priceText.appendChild(document.createTextNode("$" + currItem[PRODUCT_PRICE].toString()));
     priceDom.appendChild(priceText);
@@ -322,7 +365,7 @@ function renderCart(container, storeInstance) {
         for (var curKey in storeInstance.cart) {
             var curLabel = storeInstance.stock[curKey][PRODUCT_LABEL];
             var curQuantity = storeInstance.cart[curKey];
-            
+
             var curItemEntry = createTableEntry(curKey, curLabel, curQuantity, storeInstance);
             tableDom.appendChild(curItemEntry);
 
@@ -352,7 +395,7 @@ function cleanContainer(container) {
 function createTableHeader() {
     var header = document.createElement("tr");
     header.id = "tableHeader";
-    
+
     var headerName = document.createElement("th");
     headerName.appendChild(document.createTextNode("Item Name"));
 
@@ -402,7 +445,7 @@ function createTableEntry(itemName, itemLabel, quantity, storeInstance) {
 function createTotalEntry(total) {
     var totalEntry = document.createElement("tr");
     totalEntry.id = "totalPrice";
-    
+
     var totalTag = document.createElement("th");
     totalTag.appendChild(document.createTextNode("Total"));
 
