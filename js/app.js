@@ -13,6 +13,9 @@ var inactiveTime = 0;
 // Class Server URL
 var classUrl = "https://cpen400a-bookstore.herokuapp.com";
 
+// Error codes
+var ERR_CODES = [500, 503];
+
 /*******************************************************************************
 ********************** Store Object and related functions **********************
 *******************************************************************************/
@@ -87,10 +90,10 @@ Store.prototype.syncWithServer = function(onSync) {
             console.log(response);
 
             // Calculate delta
-            delta = calculateDelta(store.stock, response);
+            delta = calculateDelta(myStore.stock, response);
 
-            store.stock = response;
-            store.onUpdate();
+            myStore.stock = response;
+            myStore.onUpdate();
 
             if (onSync != undefined) {
                 onSync(delta);
@@ -101,6 +104,33 @@ Store.prototype.syncWithServer = function(onSync) {
             console.log(error);
         }
     );
+}
+
+Store.prototype.checkOut = function(onFinish) {
+    this.syncWithServer(function(delta) {
+        console.log("Finished Sync");
+
+        if (Object.keys(delta).length != 0) {
+            var alertMsg = "";
+
+            alert(alertMsg);
+            console.log(delta);
+        }
+        else {
+            var totalPrice = 0;
+            for (var curKey in this.cart) {
+                var curQuantity = this.cart[curKey];
+
+                // keep record of the total price
+                totalPrice += curQuantity * this.stock[curKey][PRODUCT_PRICE];
+            }
+            alert("Total price is: " + (totalPrice).toString());
+        }
+
+        if (onFinish != undefined) {
+            onFinish();
+        }
+    });
 }
 
 // Shows the cart to the user
@@ -121,13 +151,13 @@ function hideCart() {
 }
 
 // Store object
-var store = new Store(classUrl);
-store.syncWithServer();
+var myStore = new Store(classUrl);
+myStore.syncWithServer();
 
-store.onUpdate = function(itemName) {
+myStore.onUpdate = function(itemName) {
     if (itemName == undefined) {
         var productView = document.getElementById("productView");
-        renderProductList(productView, store);
+        renderProductList(productView, myStore);
     }
     else {
         renderProduct(document.getElementById("product-" + itemName), this, itemName);
@@ -155,7 +185,7 @@ function ajaxHelper(url, onSuccess, onError, iteration) {
 
     // Both success and Error -> must check status to label response
     xhr.onloadend = function() {
-        if (xhr.status == 500) {
+        if (ERR_CODES.includes(xhr.status)) {
             recurse(iteration);
         }
         else {
@@ -486,4 +516,18 @@ document.addEventListener('keydown', function(event) {
     if(event.keyCode === 27) {
         hideCart();
     }
-})
+});
+
+window.addEventListener("load", function () {
+    var checkout = document.getElementById("btn-check-out");
+
+    checkout.addEventListener("click", function(event) {
+        checkout.disabled = true;
+
+        console.log("Clicked Checkout");
+
+        myStore.checkOut(function() {
+            checkout.disabled = false;
+        });
+    });
+});
