@@ -80,37 +80,27 @@ Store.prototype.removeItemFromCart = function(itemName) {
 }
 
 Store.prototype.syncWithServer = function(onSync) {
-    delta = {};
+    ajaxGet(
+        this.serverUrl + "/products",
 
-    ajaxGet(this.serverUrl + "/products",
-            function(response) {
-                onSuccess.call(store, response);
-            },
+        function(response) {
+            console.log(response);
 
-            function(error) {
-                console.log("wat do");
-            },
+            // Calculate delta
+            delta = calculateDelta(store.stock, response);
 
-            NUM_TRIES
+            store.stock = response;
+            store.onUpdate();
+
+            if (onSync != undefined) {
+                onSync(delta);
+            }
+        },
+
+        function(error) {
+            console.log(error);
+        }
     );
-
-    if (onSync != undefined) {
-        onSync(delta);
-    }
-}
-
-function onSuccess(response) {
-    console.log(response);
-    console.log(this);
-    // Check if we have stocks yet
-    if (Object.keys(this.stock).length === 0 && this.stock.constructor === Object) {
-        this.stock = response;
-        this.onUpdate();
-    }
-    // else {
-    //
-    //     this.onUpdate();
-    // }
 }
 
 // Shows the cart to the user
@@ -150,9 +140,14 @@ store.onUpdate = function(itemName) {
 /*******************************************************************************
 ******************************** AJAXs Functions ********************************
 *******************************************************************************/
-function ajaxGet(url, onSuccess, onError, iteration) {
+function ajaxGet(url, onSuccess, onError) {
+    ajaxHelper(url, onSuccess, onError, NUM_TRIES);
+}
+
+function ajaxHelper(url, onSuccess, onError, iteration) {
     if (iteration == 0) {
-        onError();
+        onError("Attempted too many times");
+        return;
     }
 
     var xhr = new XMLHttpRequest();
@@ -176,10 +171,35 @@ function ajaxGet(url, onSuccess, onError, iteration) {
     // Recursive function for purposes of checking number of tries
     var recurse = function(currIteration) {
         console.log("Iteration: " + (-1 * (currIteration - NUM_TRIES).toString()));
-        ajaxGet(url, onSuccess, onError, currIteration - 1);
+        ajaxHelper(url, onSuccess, onError, currIteration - 1);
     }
 
     xhr.send();
+}
+
+function calculateDelta(before, after) {
+    delta = {};
+
+    for (var item in after) {
+        // Check if item exists in before
+        if (before[item] == undefined) {
+            delta[item] = item;
+        }
+        else {
+            delta[item] = {}
+            for (var key in after[item]) {
+                if (before[item][key] != after[item][key]) {
+                    delta[item][key] = after[item][key] - before[item][key];
+                }
+            }
+
+            if (Object.keys(delta[item]).length == 0) {
+                delete delta[item];
+            }
+        }
+    }
+
+    return delta;
 }
 
 /*******************************************************************************
