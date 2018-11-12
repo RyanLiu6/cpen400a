@@ -16,6 +16,8 @@ var classUrl = "https://cpen400a-bookstore.herokuapp.com";
 // Error codes
 var ERR_CODES = [500, 503];
 
+var globalTimeout = 3;
+
 /*******************************************************************************
 ********************** Store Object and related functions **********************
 *******************************************************************************/
@@ -83,6 +85,8 @@ Store.prototype.removeItemFromCart = function(itemName) {
 }
 
 Store.prototype.syncWithServer = function(onSync) {
+    var _this = this;
+
     ajaxGet(
         this.serverUrl + "/products",
 
@@ -90,10 +94,10 @@ Store.prototype.syncWithServer = function(onSync) {
             console.log(response);
 
             // Calculate delta
-            delta = calculateDelta(myStore.stock, response);
+            delta = calculateDelta(store.stock, response);
 
-            myStore.stock = response;
-            myStore.onUpdate();
+            _this.stock = response;
+            _this.onUpdate();
 
             if (onSync != undefined) {
                 onSync(delta);
@@ -151,13 +155,13 @@ function hideCart() {
 }
 
 // Store object
-var myStore = new Store(classUrl);
-myStore.syncWithServer();
+var store = new Store(classUrl);
+store.syncWithServer();
 
-myStore.onUpdate = function(itemName) {
+store.onUpdate = function(itemName) {
     if (itemName == undefined) {
         var productView = document.getElementById("productView");
-        renderProductList(productView, myStore);
+        renderProductList(productView, store);
     }
     else {
         renderProduct(document.getElementById("product-" + itemName), this, itemName);
@@ -194,6 +198,7 @@ function ajaxHelper(url, onSuccess, onError, iteration) {
     }
 
     // Timeout
+    xhr.timeout = 1000;
     xhr.ontimeout = function (e) {
         recurse(iteration);
     }
@@ -216,7 +221,7 @@ function calculateDelta(before, after) {
             delta[item] = item;
         }
         else {
-            delta[item] = {}
+            delta[item] = {};
             for (var key in after[item]) {
                 if (before[item][key] != after[item][key]) {
                     delta[item][key] = after[item][key] - before[item][key];
@@ -433,6 +438,22 @@ function renderCart(container, storeInstance) {
     }
 
     container.appendChild(tableDom);
+
+    var checkOutBtn = document.createElement("button");
+    checkOutBtn.id = "btn-check-out";
+    checkOutBtn.appendChild(document.createTextNode("Check Out"));
+    checkOutBtn.onclick = function() {
+        checkOutBtn.disabled = true;
+
+        console.log("Clicked Checkout");
+
+        var checkOutCallback = function() {
+            checkOutBtn.disabled = false;
+        };
+
+        store.checkOut(checkOutCallback)
+    };
+    container.appendChild(checkOutBtn);
 }
 
 function cleanContainer(container) {
@@ -516,18 +537,4 @@ document.addEventListener('keydown', function(event) {
     if(event.keyCode === 27) {
         hideCart();
     }
-});
-
-window.addEventListener("load", function () {
-    var checkout = document.getElementById("btn-check-out");
-
-    checkout.addEventListener("click", function(event) {
-        checkout.disabled = true;
-
-        console.log("Clicked Checkout");
-
-        myStore.checkOut(function() {
-            checkout.disabled = false;
-        });
-    });
 });
