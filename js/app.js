@@ -111,28 +111,48 @@ Store.prototype.syncWithServer = function(onSync) {
 }
 
 Store.prototype.checkOut = function(onFinish) {
+    var _this = this;
+    
     this.syncWithServer(function(delta) {
         console.log("Finished Sync");
 
         if (Object.keys(delta).length != 0) {
             var alertMsg = "";
 
+            for(var key in delta) {       
+                if(PRODUCT_PRICE in delta[key]) {
+                    var curPrice = _this.stock[key][PRODUCT_PRICE];
+                    var pastPrice = curPrice - delta[key][PRODUCT_PRICE];
+
+                    var priceChangeMsg = "Price of " + key + " changed from $" + pastPrice + " to $" + curPrice + "\n";
+                    alertMsg += priceChangeMsg;
+                }
+
+                if(PRODUCT_QUANTITY in delta[key]) {
+                    var curQuantity = _this.stock[key][PRODUCT_QUANTITY];
+                    var pastQuantity = curQuantity - delta[key][PRODUCT_QUANTITY];
+
+                    var quantityChangeMsg = "Quantity of " + key + " changed from " + pastQuantity + " to " + curQuantity + "\n";
+                    alertMsg += quantityChangeMsg;
+                }
+            }
+
             alert(alertMsg);
             console.log(delta);
         }
         else {
             var totalPrice = 0;
-            for (var curKey in this.cart) {
-                var curQuantity = this.cart[curKey];
+            for (var curKey in _this.cart) {
+                var curQuantity = _this.cart[curKey];
 
                 // keep record of the total price
-                totalPrice += curQuantity * this.stock[curKey][PRODUCT_PRICE];
+                totalPrice += curQuantity * _this.stock[curKey][PRODUCT_PRICE];
             }
             alert("Total price is: " + (totalPrice).toString());
         }
 
         if (onFinish != undefined) {
-            onFinish();
+            onFinish(delta);
         }
     });
 }
@@ -447,8 +467,19 @@ function renderCart(container, storeInstance) {
 
         console.log("Clicked Checkout");
 
-        var checkOutCallback = function() {
+        var checkOutCallback = function(delta) {
             checkOutBtn.disabled = false;
+
+            if (Object.keys(delta).length != 0) {
+                var alertMsg = "";
+
+                for(var item in delta) {
+                    
+                }
+    
+                alert(alertMsg);
+                console.log(delta);
+            }
         };
 
         store.checkOut(checkOutCallback)
