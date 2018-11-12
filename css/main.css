@@ -279,3 +279,15 @@ body {
     font-size: 16px;
     margin-bottom: 15%;
 }
+
+#btn-check-out {
+    width: 80px;
+    background-color: #DDA0DD;
+    color: white;
+    border: none;
+    margin: 0 1%;
+    padding: 3px 3px;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 1%;
+}

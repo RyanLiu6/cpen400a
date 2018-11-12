@@ -112,14 +112,14 @@ Store.prototype.syncWithServer = function(onSync) {
 
 Store.prototype.checkOut = function(onFinish) {
     var _this = this;
-    
+
     this.syncWithServer(function(delta) {
         console.log("Finished Sync");
 
         if (Object.keys(delta).length != 0) {
             var alertMsg = "";
 
-            for(var key in delta) {       
+            for(var key in delta) {
                 if(PRODUCT_PRICE in delta[key]) {
                     var curPrice = _this.stock[key][PRODUCT_PRICE];
                     var pastPrice = curPrice - delta[key][PRODUCT_PRICE];
@@ -474,9 +474,9 @@ function renderCart(container, storeInstance) {
                 var alertMsg = "";
 
                 for(var item in delta) {
-                    
+
                 }
-    
+
                 alert(alertMsg);
                 console.log(delta);
             }
