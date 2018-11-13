@@ -94,9 +94,9 @@ Store.prototype.syncWithServer = function(onSync) {
             console.log(response);
 
             // Calculate delta
-            delta = calculateDelta(store.stock, response);
+            delta = calculateDelta(_this.stock, response, _this.cart);
 
-            _this.stock = response;
+            updateStock(_this, response);
             _this.onUpdate();
 
             if (onSync != undefined) {
@@ -119,8 +119,8 @@ Store.prototype.checkOut = function(onFinish) {
         if (Object.keys(delta).length != 0) {
             var alertMsg = "";
 
-            for(var key in delta) {
-                if(PRODUCT_PRICE in delta[key]) {
+            for (var key in delta) {
+                if (PRODUCT_PRICE in delta[key]) {
                     var curPrice = _this.stock[key][PRODUCT_PRICE];
                     var pastPrice = curPrice - delta[key][PRODUCT_PRICE];
 
@@ -128,8 +128,16 @@ Store.prototype.checkOut = function(onFinish) {
                     alertMsg += priceChangeMsg;
                 }
 
-                if(PRODUCT_QUANTITY in delta[key]) {
-                    var curQuantity = _this.stock[key][PRODUCT_QUANTITY];
+                if (PRODUCT_QUANTITY in delta[key]) {
+                    var cartQuantity;
+                    if (key in _this.cart) {
+                        cartQuantity = _this.cart[key];
+                    }
+                    else {
+                        cartQuantity = 0;
+                    }
+
+                    var curQuantity = _this.stock[key][PRODUCT_QUANTITY] + cartQuantity;
                     var pastQuantity = curQuantity - delta[key][PRODUCT_QUANTITY];
 
                     var quantityChangeMsg = "Quantity of " + key + " changed from " + pastQuantity + " to " + curQuantity + "\n";
@@ -139,6 +147,9 @@ Store.prototype.checkOut = function(onFinish) {
 
             alert(alertMsg);
             console.log(delta);
+
+            var modalContainer = document.getElementById("modal-content");
+            renderCart(modalContainer, _this);
         }
         else {
             var totalPrice = 0;
@@ -232,19 +243,31 @@ function ajaxHelper(url, onSuccess, onError, iteration) {
     xhr.send();
 }
 
-function calculateDelta(before, after) {
+function calculateDelta(before, after, cart) {
     delta = {};
 
     for (var item in after) {
         // Check if item exists in before
-        if (before[item] == undefined) {
-            delta[item] = item;
-        }
-        else {
+        if (item in before) {
             delta[item] = {};
             for (var key in after[item]) {
-                if (before[item][key] != after[item][key]) {
-                    delta[item][key] = after[item][key] - before[item][key];
+                if(key == PRODUCT_PRICE) {
+                    if (before[item][key] != after[item][key]) {
+                        delta[item][key] = after[item][key] - before[item][key];
+                    }
+                }
+
+                if(key == PRODUCT_QUANTITY) {
+                    var curQuantity = before[item][key];
+
+                    if (item in cart) {
+                        console.log(key);
+                        curQuantity += cart[item];
+                    }
+
+                    if (curQuantity != after[item][key]) {
+                        delta[item][key] = after[item][key] - curQuantity;
+                    }
                 }
             }
 
@@ -252,9 +275,32 @@ function calculateDelta(before, after) {
                 delete delta[item];
             }
         }
+        else {
+            delta[item] = item;
+        }
     }
 
     return delta;
+}
+
+function updateStock(store, newStock) {
+    var curCart = store.cart;
+    for (var key in curCart) {
+        if (key in newStock) {
+            if (newStock[key][PRODUCT_QUANTITY] >= curCart[key]) {
+                newStock[key][PRODUCT_QUANTITY] -= curCart[key];
+            }
+            else {
+                curCart[key] = newStock[key][PRODUCT_QUANTITY];
+                newStock[key][PRODUCT_QUANTITY] = 0;
+            }
+        }
+        else {
+            curCart[key] = 0;
+        }
+    }
+
+    store.stock = newStock;
 }
 
 /*******************************************************************************
@@ -471,13 +517,6 @@ function renderCart(container, storeInstance) {
             checkOutBtn.disabled = false;
 
             if (Object.keys(delta).length != 0) {
-                var alertMsg = "";
-
-                for(var item in delta) {
-
-                }
-
-                alert(alertMsg);
                 console.log(delta);
             }
         };
