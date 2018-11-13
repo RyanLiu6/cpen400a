@@ -291,3 +291,7 @@ body {
     font-size: 16px;
     margin-bottom: 1%;
 }
+
+#btn-check-out:disabled {
+    background-color: #694C69;
+}
