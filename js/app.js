@@ -305,6 +305,10 @@ function updateStock(store, newStock) {
                 // Decrease the amount in the cart to that of the available stock
                 curCart[key] = newStock[key][PRODUCT_QUANTITY];
                 newStock[key][PRODUCT_QUANTITY] = 0;
+
+                if (curCart[key] == 0) {
+                    delete curCart[key];
+                }
             }
         }
         else {
