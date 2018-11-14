@@ -117,6 +117,8 @@ Store.prototype.checkOut = function(onFinish) {
         console.log("Finished Sync");
 
         if (Object.keys(delta).length != 0) {
+            // If there are changes in price and quantity
+            // Print the changes
             var alertMsg = "";
 
             for (var key in delta) {
@@ -129,6 +131,7 @@ Store.prototype.checkOut = function(onFinish) {
                 }
 
                 if (PRODUCT_QUANTITY in delta[key]) {
+                    // Need to take into account quantity of items added to cart
                     var cartQuantity;
                     if (key in _this.cart) {
                         cartQuantity = _this.cart[key];
@@ -250,7 +253,10 @@ function calculateDelta(before, after, cart) {
         // Check if item exists in before
         if (item in before) {
             delta[item] = {};
+
+            // Iterate through all the associated keys for an item
             for (var key in after[item]) {
+                // Only operate on price and qunatity keys
                 if(key == PRODUCT_PRICE) {
                     if (before[item][key] != after[item][key]) {
                         delta[item][key] = after[item][key] - before[item][key];
@@ -258,6 +264,7 @@ function calculateDelta(before, after, cart) {
                 }
 
                 if(key == PRODUCT_QUANTITY) {
+                    // Need to take into account the amount in the cart right now
                     var curQuantity = before[item][key];
 
                     if (item in cart) {
@@ -271,6 +278,7 @@ function calculateDelta(before, after, cart) {
                 }
             }
 
+            // Delete the item from delta if there are no changes
             if (Object.keys(delta[item]).length == 0) {
                 delete delta[item];
             }
@@ -288,9 +296,13 @@ function updateStock(store, newStock) {
     for (var key in curCart) {
         if (key in newStock) {
             if (newStock[key][PRODUCT_QUANTITY] >= curCart[key]) {
+                // If there is enough available stock for the cart
+                // Then just subtract amount in cart from the stock
                 newStock[key][PRODUCT_QUANTITY] -= curCart[key];
             }
             else {
+                // If there is less stock now than what was in the cart before
+                // Decrease the amount in the cart to that of the available stock
                 curCart[key] = newStock[key][PRODUCT_QUANTITY];
                 newStock[key][PRODUCT_QUANTITY] = 0;
             }
