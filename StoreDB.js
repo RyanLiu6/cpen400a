@@ -24,9 +24,62 @@ function StoreDB(mongoUrl, dbName){
 	});
 }
 
+/*
+Query = {
+    minPrice: Number|String,
+    maxPrice: Number|String,
+    category: String
+}
+ */
 StoreDB.prototype.getProducts = function(queryParams){
 	return this.connected.then(function(db){
-		// TODO: Implement functionality
+		var query = {};
+        var result = null;
+        if (queryParams != undefined) {
+            if (queryParams.minPrice != undefined) {
+                query.price = {
+                    "$gte" : Number(queryParams.minPrice)
+                }
+            }
+
+            if (queryParams.maxPrice != undefined) {
+                if (query.price != undefined) {
+                    query.price["$lte"] = Number(queryParams.maxPrice)
+                }
+                else {
+                    query.price = {
+                        "$lte" : Number(queryParams.maxPrice)
+                    }
+                }
+            }
+
+            if (queryParams.category != undefined) {
+                query.category = {
+                    "$eq" : queryParams.category
+                }
+            }
+        }
+
+        return new Promise(function(resolve, reject) {
+            db.collection("products").find(query).toArray(function(err, output) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    // Construct the Products Associative Array
+                    var products = {};
+
+                    for (var i = 0; i < output.length; i++) {
+                        products[output[i]["_id"]] = output[i];
+                    }
+
+                    // Prune the array
+                    pruneArray(products);
+
+                    resolve(products);
+                }
+            });
+        })
 	})
 }
 
@@ -34,6 +87,12 @@ StoreDB.prototype.addOrder = function(order){
 	return this.connected.then(function(db){
 		// TODO: Implement functionality
 	})
+}
+
+function pruneArray(arr) {
+    for (var key in arr) {
+        delete arr[key]["_id"];
+    }
 }
 
 module.exports = StoreDB;

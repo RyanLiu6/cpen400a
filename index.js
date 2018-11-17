@@ -1,10 +1,16 @@
 // Require dependencies
 var path = require('path');
 var express = require('express');
+var StoreDB = require("./StoreDB");
 
 // Declare application parameters
 var PORT = process.env.PORT || 3000;
 var STATIC_ROOT = path.resolve(__dirname, './public');
+var MONGO_URL = "mongodb://localhost:27017";
+var DB_NAME = "cpen400a-bookstore";
+var ERR_MSG = {
+    error : "Press F for respects :'("
+};
 
 // Defining CORS middleware to enable CORS.
 // (should really be using "express-cors",
@@ -15,6 +21,9 @@ function cors(req, res, next){
   	res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS,PUT");
   	next();
 }
+
+// Instantiate the database
+var db = new StoreDB(MONGO_URL, DB_NAME);
 
 // Instantiate an express.js application
 var app = express();
@@ -28,9 +37,19 @@ app.use('/', express.static(STATIC_ROOT));			// Serve STATIC_ROOT at URL "/" as 
 
 // Configure '/products' endpoint
 app.get('/products', function(request, response) {
-	response.json({
-		Example: 'This is an Example!'
-	});
+    // console.log(request.body);
+
+    var findPromise = db.getProducts(null);
+
+    findPromise.then(
+        function(result) {
+            response.json(result);
+        },
+
+        function(err) {
+            response.status(500).send(ERR_MSG);
+        }
+    );
 });
 
 // Start listening on TCP port
