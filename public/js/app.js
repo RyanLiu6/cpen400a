@@ -709,7 +709,7 @@ function renderMenu(container, storeInstance){
 		list.id = 'menu';
         list.style = "list-style-type:none"
 		var listItem = document.createElement('li'); list.appendChild(listItem);
-			listItem.className = 'menuItem' + (container._filters.category === '' ? ' active': '');
+			listItem.className = 'menuItem' + (container._filters.category === '' ? '-active': '');
             var fontItem = document.createElement("font");
             fontItem.appendChild(document.createTextNode('All Items'));
 			listItem.appendChild(fontItem);
@@ -720,7 +720,7 @@ function renderMenu(container, storeInstance){
 	var CATEGORIES = [ 'Clothing', 'Technology', 'Office', 'Outdoor' ];
 	for (var i in CATEGORIES){
 		var listItem = document.createElement('li'); list.appendChild(listItem);
-			listItem.className = 'menuItem' + (container._filters.category === CATEGORIES[i] ? ' active': '');
+			listItem.className = 'menuItem' + (container._filters.category === CATEGORIES[i] ? '-active': '');
             var fontItem = document.createElement("font");
             fontItem.appendChild(document.createTextNode(CATEGORIES[i]));
             listItem.appendChild(fontItem);

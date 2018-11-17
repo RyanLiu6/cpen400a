@@ -47,7 +47,7 @@ body {
     padding-top: 12px;
 }
 
-#menu li {
+.menuItem {
     float: left;
     height: 50px;
     width: 200px;
@@ -56,6 +56,20 @@ body {
     border-top: 10px solid white;
     border-bottom: 10px solid white;
     background-color: #3F93AA;
+    vertical-align: top;
+    text-align: center;
+    position: relative;
+}
+
+.menuItem-active {
+    float: left;
+    height: 50px;
+    width: 200px;
+    margin: 0;
+    padding: 0;
+    border-top: 10px solid white;
+    border-bottom: 10px solid white;
+    background-color: #A07B7D;
     vertical-align: top;
     text-align: center;
     position: relative;
