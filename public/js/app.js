@@ -11,7 +11,7 @@ var NUM_TRIES = 3;
 var inactiveTime = 0;
 
 // Class Server URL
-var classUrl = "http://localhost:3000/";
+var classUrl = "http://localhost:3000";
 
 // Error codes
 var ERR_CODES = [500, 503];
@@ -709,6 +709,7 @@ function renderMenu(container, storeInstance){
 
 	var list = document.createElement('ul'); container.appendChild(list);
 		list.id = 'menu';
+        list.style = "list-style-type:none"
 		var listItem = document.createElement('li'); list.appendChild(listItem);
 			listItem.className = 'menuItem' + (container._filters.category === '' ? ' active': '');
 			listItem.appendChild(document.createTextNode('All Items'));
