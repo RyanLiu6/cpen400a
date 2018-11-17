@@ -710,7 +710,9 @@ function renderMenu(container, storeInstance){
         list.style = "list-style-type:none"
 		var listItem = document.createElement('li'); list.appendChild(listItem);
 			listItem.className = 'menuItem' + (container._filters.category === '' ? ' active': '');
-			listItem.appendChild(document.createTextNode('All Items'));
+            var fontItem = document.createElement("font");
+            fontItem.appendChild(document.createTextNode('All Items'));
+			listItem.appendChild(fontItem);
 			listItem.addEventListener('click', function(event){
 				container._filters.category = '';
 				container._refresh()
@@ -719,7 +721,9 @@ function renderMenu(container, storeInstance){
 	for (var i in CATEGORIES){
 		var listItem = document.createElement('li'); list.appendChild(listItem);
 			listItem.className = 'menuItem' + (container._filters.category === CATEGORIES[i] ? ' active': '');
-			listItem.appendChild(document.createTextNode(CATEGORIES[i]));
+            var fontItem = document.createElement("font");
+            fontItem.appendChild(document.createTextNode(CATEGORIES[i]));
+            listItem.appendChild(fontItem);
 			listItem.addEventListener('click', (function(i){
 				return function(event){
 					container._filters.category = CATEGORIES[i];

@@ -34,7 +34,7 @@ Query = {
 StoreDB.prototype.getProducts = function(queryParams){
 	return this.connected.then(function(db){
 		var query = {};
-        var result = null;
+        
         if (queryParams != undefined) {
             if (queryParams.minPrice != undefined) {
                 query.price = {

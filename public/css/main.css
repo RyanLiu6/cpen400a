@@ -32,8 +32,13 @@ body {
     vertical-align: top;
 }
 
-#menu {
+#menuView {
     width: 25%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#menu {
     display: inline-block;
     vertical-align: top;
     text-align: center;
@@ -89,8 +94,9 @@ body {
 }
 
 #productView {
-    width: 75%;
+    width: 74%;
     display: inline-block;
+    vertical-align: top;
 }
 
 #productList {
@@ -294,4 +300,24 @@ body {
 
 #btn-check-out:disabled {
     background-color: #694C69;
+}
+
+input{
+    width: 150px;
+    height: 30px;
+    text-align: center;
+    border: 2px solid #DDA0DD;
+    border-radius: 4px;
+    color: gray;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input::placeholder {
+    color: gray;
+    font-size: 16px;
+}
+
+input:focus {
+    width: 80%;
 }
