@@ -37,9 +37,9 @@ app.use('/', express.static(STATIC_ROOT));			// Serve STATIC_ROOT at URL "/" as 
 
 // Configure '/products' endpoint
 app.get('/products', function(request, response) {
-    // console.log(request.body);
+    var queryString = request.query;
 
-    var findPromise = db.getProducts(null);
+    var findPromise = db.getProducts(queryString);
 
     findPromise.then(
         function(result) {

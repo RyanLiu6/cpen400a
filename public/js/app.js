@@ -93,8 +93,6 @@ Store.prototype.syncWithServer = function(onSync) {
         this.serverUrl + "/products",
 
         function(response) {
-            console.log(response);
-
             // Calculate delta
             delta = calculateDelta(_this.stock, response, _this.cart);
 
@@ -193,8 +191,9 @@ function hideCart() {
 // Store object
 var store = new Store(classUrl);
 store.syncWithServer(function(delta) {
+    var i = 0;
     for (var key in delta) {
-        displayed[key] = delta[key];
+        displayed[i++] = key;
     }
 
     renderProductList(productView, store);
@@ -203,7 +202,7 @@ store.syncWithServer(function(delta) {
 store.onUpdate = function(itemName) {
     if (itemName == undefined) {
         var productView = document.getElementById("productView");
-        renderProductList(productView, this);
+        renderProductList(productView, store);
     }
     else {
         renderProduct(document.getElementById("product-" + itemName), this, itemName);
@@ -372,15 +371,15 @@ function renderProductList(container, storeInstance) {
     productList.style.listStyle = "none";
 
     // iterate through all avaialble products in the store
-    var stock = displayed;
-    for(var key in stock) {
+    for(var key in displayed) {
         // create a new li element and use it as container for
         // the product to be rendered in
+        var currProduct = displayed[key]
         var productDom = document.createElement("li");
-        productDom.id = "product-" + key;
+        productDom.id = "product-" + currProduct;
         productDom.className = "product";
 
-        renderProduct(productDom, storeInstance, key);
+        renderProduct(productDom, storeInstance, currProduct);
 
         productList.appendChild(productDom);
     }
@@ -392,8 +391,6 @@ function renderProductList(container, storeInstance) {
     }
 
     container.appendChild(productList);
-
-    console.log(productList);
 }
 
 // container: DOM element -> list element w/ id="product-<itemName>"
@@ -630,12 +627,13 @@ function createTotalEntry(total) {
 ***************************** Provided Functions *******************************
 *******************************************************************************/
 Store.prototype.queryProducts = function(query, callback){
-	var self = this;
+    var self = this;
 	var queryString = Object.keys(query).reduce(function(acc, key){
 			return acc + (query[key] ? ((acc ? '&':'') + key + '=' + query[key]) : '');
 		}, '');
 	ajaxGet(this.serverUrl+"/products?"+queryString,
 		function(products){
+            console.log(products);
 			Object.keys(products)
 				.forEach(function(itemName){
 					var rem = products[itemName].quantity - (self.cart[itemName] || 0);
