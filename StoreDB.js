@@ -85,7 +85,29 @@ StoreDB.prototype.getProducts = function(queryParams){
 
 StoreDB.prototype.addOrder = function(order){
 	return this.connected.then(function(db){
-		// TODO: Implement functionality
+        // TODO: Implement functionality
+        var cart = order["cart"];
+
+        for (var itemName in cart) {
+            var itemQuantity = cart[itemName];
+
+            db.collection("products").updateOne(
+                { label: itemName },
+                { $inc: { quantity: -itemQuantity } }
+            );
+        }
+
+        return new Promise(function(resolve, reject) {
+            db.collection("orders").insertOne(order, function(err, output) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    var insertId = output.ops[0]["_id"];
+                    resolve(insertId);
+                }
+            });
+        });
 	})
 }
 

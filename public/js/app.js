@@ -25,7 +25,7 @@ var displayed = [];
 *******************************************************************************/
 var Store = function(serverUrl) {
     this.serverUrl = serverUrl;
-    this.cart = [];
+    this.cart = {};
     this.stock = {};
     this.onUpdate = null;
 }
@@ -163,12 +163,47 @@ Store.prototype.checkOut = function(onFinish) {
                 totalPrice += curQuantity * _this.stock[curKey][PRODUCT_PRICE];
             }
             alert("Total price is: " + (totalPrice).toString());
+
+            // TODO: ACTUAL CHECKOUT HERE
+
+            var order = {};
+
+            var clientId = genUuid();
+            order["client_id"] = clientId; // TODO: GENERATE SOMETHING RANDOM HERE
+            order["cart"] = _this.cart;
+            order["total"] = totalPrice;
+
+            var onSuccessCallback = function (response) {
+                alert("Order has been placed!");
+                _this.cart = {};
+                store.onUpdate();
+            };
+
+            var onErrorCallback = function (error) {
+                alert("Server returned error: " + error);
+            };
+
+            var postUrl = "/checkout"
+
+            ajaxPost(postUrl,
+                        order,
+                        onSuccessCallback,
+                        onErrorCallback);
         }
 
         if (onFinish != undefined) {
             onFinish(delta);
         }
     });
+}
+
+function genUuid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
 // Shows the cart to the user
@@ -201,15 +236,16 @@ store.syncWithServer(function(delta) {
 
 store.onUpdate = function(itemName) {
     if (itemName == undefined) {
-        var productView = document.getElementById("productView");
-        renderProductList(productView, store);
+        var productListView = document.getElementById("productView");
+        renderProductList(productListView, store);
     }
     else {
-        renderProduct(document.getElementById("product-" + itemName), this, itemName);
-
-        var modalContainer = document.getElementById("modal-content");
-        renderCart(modalContainer, this);
+        var productView = document.getElementById("product-" + itemName);
+        renderProduct(productView, this, itemName);
     }
+
+    var modalContainer = document.getElementById("modal-content");
+    renderCart(modalContainer, this);
 
     var menuView = document.getElementById("menuView");
     renderMenu(menuView, this);
@@ -254,6 +290,33 @@ function ajaxHelper(url, onSuccess, onError, iteration) {
     }
 
     xhr.send();
+}
+
+function ajaxPost(url, data, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+    xhr.onloadend = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                var responseJson = JSON.parse(xhr.responseText);
+                onSuccess(responseJson);
+            }
+            else {
+                onError(xhr.status);
+            }
+        }
+    }
+
+    xhr.timeout = 1000;
+    xhr.ontimeout = function (e) {
+        onError(e);
+    }
+
+    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+
+    var payload = JSON.stringify(data);
+    xhr.send(payload);
 }
 
 function calculateDelta(before, after, cart) {

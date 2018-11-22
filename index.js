@@ -52,6 +52,72 @@ app.get('/products', function(request, response) {
     );
 });
 
+app.post('/checkout', function(request, response) {
+    var order = request.body;
+
+    if (!orderSanitize(order)) {
+        response.status(400).send("Bad Order");
+    }
+    else {
+        var findPromise = db.addOrder(order);
+
+        findPromise.then(
+            function(result) {
+                response.json(result);
+            },
+
+            function(err) {
+                response.status(500).send("Order is kill: " + err);
+            }
+        );
+    }
+});
+
+function orderSanitize(data) {
+    var orderCorrect = true;
+
+    if ("client_id" in data) {
+        if (typeof data["client_id"] !== "string") {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if ("cart" in data) {
+        var cart = data["cart"];
+        if (typeof cart === "object") {
+            for (var prodId in cart) {
+                if (typeof prodId !== "string") {
+                    return false;
+                }
+                
+                if (typeof cart[prodId] !== "number") {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if ("total" in data) {
+        if (typeof data["total"] !== "number") {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    return orderCorrect;
+}
+
 // Start listening on TCP port
 app.listen(PORT, function(){
     console.log('Express.js server started, listening on PORT '+PORT);
