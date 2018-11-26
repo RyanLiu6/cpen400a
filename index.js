@@ -56,7 +56,7 @@ app.post('/checkout', function(request, response) {
     var order = request.body;
 
     if (!orderSanitize(order)) {
-        response.status(400).send("Bad Order");
+        response.status(500).send("Bad Order");
     }
     else {
         var findPromise = db.addOrder(order);
@@ -74,8 +74,9 @@ app.post('/checkout', function(request, response) {
 });
 
 function orderSanitize(data) {
-    var orderCorrect = true;
+    // Fail fast (ie. return false as soon as error is found)
 
+    // client_id check
     if ("client_id" in data) {
         if (typeof data["client_id"] !== "string") {
             return false;
@@ -85,6 +86,7 @@ function orderSanitize(data) {
         return false;
     }
 
+    // cart check
     if ("cart" in data) {
         var cart = data["cart"];
         if (typeof cart === "object") {
@@ -106,6 +108,7 @@ function orderSanitize(data) {
         return false;
     }
 
+    // total check
     if ("total" in data) {
         if (typeof data["total"] !== "number") {
             return false;
@@ -115,7 +118,8 @@ function orderSanitize(data) {
         return false;
     }
 
-    return orderCorrect;
+    // Everything looks good
+    return true;
 }
 
 // Start listening on TCP port

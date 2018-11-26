@@ -86,18 +86,32 @@ StoreDB.prototype.getProducts = function(queryParams){
 StoreDB.prototype.addOrder = function(order){
 	return this.connected.then(function(db){
         // TODO: Implement functionality
-        var cart = order["cart"];
-
-        for (var itemName in cart) {
-            var itemQuantity = cart[itemName];
-
-            db.collection("products").updateOne(
-                { label: itemName },
-                { $inc: { quantity: -itemQuantity } }
-            );
-        }
 
         return new Promise(function(resolve, reject) {
+            if (!orderSanitize(order)) {
+                var err = new Error('invalid order');
+                reject(err);
+            }
+
+            var cart = order["cart"];
+
+            for (var itemName in cart) {
+                var itemQuantity = cart[itemName];
+
+                db.collection("products").updateOne(
+                    { _id: itemName },
+                    { $inc: { quantity: -itemQuantity } },
+                    function(err, output) {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            console.log("Updated quantities of " + output.modifiedCount + " items");
+                        }
+                    }
+                );
+            }
+
             db.collection("orders").insertOne(order, function(err, output) {
                 if (err) {
                     reject(err);
@@ -115,6 +129,55 @@ function pruneArray(arr) {
     for (var key in arr) {
         delete arr[key]["_id"];
     }
+}
+
+function orderSanitize(data) {
+    // Fail fast (ie. return false as soon as error is found)
+
+    // client_id check
+    if ("client_id" in data) {
+        if (typeof data["client_id"] !== "string") {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    // cart check
+    if ("cart" in data) {
+        var cart = data["cart"];
+        if (typeof cart === "object") {
+            for (var prodId in cart) {
+                if (typeof prodId !== "string") {
+                    return false;
+                }
+                
+                if (typeof cart[prodId] !== "number") {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    // total check
+    if ("total" in data) {
+        if (typeof data["total"] !== "number") {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    // Everything looks good
+    return true;
 }
 
 module.exports = StoreDB;
