@@ -11,19 +11,21 @@ var NUM_TRIES = 3;
 var inactiveTime = 0;
 
 // Class Server URL
-var classUrl = "https://cpen400a-bookstore.herokuapp.com";
+var classUrl = "http://localhost:3000";
 
 // Error codes
 var ERR_CODES = [500, 503];
 
 var globalTimeout = 3;
 
+var displayed = [];
+
 /*******************************************************************************
 ********************** Store Object and related functions **********************
 *******************************************************************************/
 var Store = function(serverUrl) {
     this.serverUrl = serverUrl;
-    this.cart = [];
+    this.cart = {};
     this.stock = {};
     this.onUpdate = null;
 }
@@ -91,8 +93,6 @@ Store.prototype.syncWithServer = function(onSync) {
         this.serverUrl + "/products",
 
         function(response) {
-            console.log(response);
-
             // Calculate delta
             delta = calculateDelta(_this.stock, response, _this.cart);
 
@@ -163,12 +163,47 @@ Store.prototype.checkOut = function(onFinish) {
                 totalPrice += curQuantity * _this.stock[curKey][PRODUCT_PRICE];
             }
             alert("Total price is: " + (totalPrice).toString());
+
+            // TODO: ACTUAL CHECKOUT HERE
+
+            var order = {};
+
+            var clientId = genUuid();
+            order["client_id"] = clientId; // TODO: GENERATE SOMETHING RANDOM HERE
+            order["cart"] = _this.cart;
+            order["total"] = totalPrice;
+
+            var onSuccessCallback = function (response) {
+                alert("Order has been placed!");
+                _this.cart = {};
+                store.onUpdate();
+            };
+
+            var onErrorCallback = function (error) {
+                alert("Server returned error: " + error);
+            };
+
+            var postUrl = "/checkout"
+
+            ajaxPost(postUrl,
+                        order,
+                        onSuccessCallback,
+                        onErrorCallback);
         }
 
         if (onFinish != undefined) {
             onFinish(delta);
         }
     });
+}
+
+function genUuid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
 // Shows the cart to the user
@@ -190,19 +225,30 @@ function hideCart() {
 
 // Store object
 var store = new Store(classUrl);
-store.syncWithServer();
+store.syncWithServer(function(delta) {
+    var i = 0;
+    for (var key in delta) {
+        displayed[i++] = key;
+    }
+
+    renderProductList(productView, store);
+});
 
 store.onUpdate = function(itemName) {
     if (itemName == undefined) {
-        var productView = document.getElementById("productView");
-        renderProductList(productView, store);
+        var productListView = document.getElementById("productView");
+        renderProductList(productListView, store);
     }
     else {
-        renderProduct(document.getElementById("product-" + itemName), this, itemName);
-
-        var modalContainer = document.getElementById("modal-content");
-        renderCart(modalContainer, this);
+        var productView = document.getElementById("product-" + itemName);
+        renderProduct(productView, this, itemName);
     }
+
+    var modalContainer = document.getElementById("modal-content");
+    renderCart(modalContainer, this);
+
+    var menuView = document.getElementById("menuView");
+    renderMenu(menuView, this);
 }
 
 /*******************************************************************************
@@ -244,6 +290,33 @@ function ajaxHelper(url, onSuccess, onError, iteration) {
     }
 
     xhr.send();
+}
+
+function ajaxPost(url, data, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+    xhr.onloadend = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                var responseJson = JSON.parse(xhr.responseText);
+                onSuccess(responseJson);
+            }
+            else {
+                onError(xhr.status);
+            }
+        }
+    }
+
+    xhr.timeout = 1000;
+    xhr.ontimeout = function (e) {
+        onError(e);
+    }
+
+    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+
+    var payload = JSON.stringify(data);
+    xhr.send(payload);
 }
 
 function calculateDelta(before, after, cart) {
@@ -361,15 +434,15 @@ function renderProductList(container, storeInstance) {
     productList.style.listStyle = "none";
 
     // iterate through all avaialble products in the store
-    var stock = storeInstance.stock;
-    for(var key in stock) {
+    for(var key in displayed) {
         // create a new li element and use it as container for
         // the product to be rendered in
+        var currProduct = displayed[key]
         var productDom = document.createElement("li");
-        productDom.id = "product-" + key;
+        productDom.id = "product-" + currProduct;
         productDom.className = "product";
 
-        renderProduct(productDom, storeInstance, key);
+        renderProduct(productDom, storeInstance, currProduct);
 
         productList.appendChild(productDom);
     }
@@ -381,8 +454,6 @@ function renderProductList(container, storeInstance) {
     }
 
     container.appendChild(productList);
-
-    console.log(productList);
 }
 
 // container: DOM element -> list element w/ id="product-<itemName>"
@@ -613,6 +684,116 @@ function createTotalEntry(total) {
     totalEntry.appendChild(totalPrice);
 
     return totalEntry;
+}
+
+/*******************************************************************************
+***************************** Provided Functions *******************************
+*******************************************************************************/
+Store.prototype.queryProducts = function(query, callback){
+    var self = this;
+	var queryString = Object.keys(query).reduce(function(acc, key){
+			return acc + (query[key] ? ((acc ? '&':'') + key + '=' + query[key]) : '');
+		}, '');
+	ajaxGet(this.serverUrl+"/products?"+queryString,
+		function(products){
+            console.log(products);
+			Object.keys(products)
+				.forEach(function(itemName){
+					var rem = products[itemName].quantity - (self.cart[itemName] || 0);
+					if (rem >= 0){
+						self.stock[itemName].quantity = rem;
+					}
+					else {
+						self.stock[itemName].quantity = 0;
+						self.cart[itemName] = products[itemName].quantity;
+						if (self.cart[itemName] === 0) delete self.cart[itemName];
+					}
+
+					self.stock[itemName] = Object.assign(self.stock[itemName], {
+						price: products[itemName].price,
+						label: products[itemName].label,
+						imageUrl: products[itemName].imageUrl
+					});
+				});
+			self.onUpdate();
+			callback(null, products);
+		},
+		function(error){
+			callback(error);
+		}
+	)
+}
+
+function renderMenu(container, storeInstance){
+	while (container.lastChild) container.removeChild(container.lastChild);
+	if (!container._filters) {
+		container._filters = {
+			minPrice: null,
+			maxPrice: null,
+			category: ''
+		};
+		container._refresh = function(){
+			storeInstance.queryProducts(container._filters, function(err, products){
+					if (err){
+						alert('Error occurred trying to query products');
+						console.log(err);
+					}
+					else {
+						displayed = Object.keys(products);
+						renderProductList(document.getElementById('productView'), storeInstance);
+					}
+				});
+		}
+	}
+
+	var box = document.createElement('div'); container.appendChild(box);
+		box.id = 'price-filter';
+		var input = document.createElement('input'); box.appendChild(input);
+			input.type = 'number';
+			input.value = container._filters.minPrice;
+			input.min = 0;
+			input.placeholder = 'Min Price';
+			input.addEventListener('blur', function(event){
+				container._filters.minPrice = event.target.value;
+				container._refresh();
+			});
+
+		input = document.createElement('input'); box.appendChild(input);
+			input.type = 'number';
+			input.value = container._filters.maxPrice;
+			input.min = 0;
+			input.placeholder = 'Max Price';
+			input.addEventListener('blur', function(event){
+				container._filters.maxPrice = event.target.value;
+				container._refresh();
+			});
+
+	var list = document.createElement('ul'); container.appendChild(list);
+		list.id = 'menu';
+        list.style = "list-style-type:none"
+		var listItem = document.createElement('li'); list.appendChild(listItem);
+			listItem.className = 'menuItem' + (container._filters.category === '' ? '-active': '');
+            var fontItem = document.createElement("font");
+            fontItem.appendChild(document.createTextNode('All Items'));
+			listItem.appendChild(fontItem);
+			listItem.addEventListener('click', function(event){
+				container._filters.category = '';
+				container._refresh()
+			});
+	var CATEGORIES = [ 'Clothing', 'Technology', 'Office', 'Outdoor' ];
+	for (var i in CATEGORIES){
+		var listItem = document.createElement('li'); list.appendChild(listItem);
+			listItem.className = 'menuItem' + (container._filters.category === CATEGORIES[i] ? '-active': '');
+            var fontItem = document.createElement("font");
+            fontItem.appendChild(document.createTextNode(CATEGORIES[i]));
+            listItem.appendChild(fontItem);
+			listItem.addEventListener('click', (function(i){
+				return function(event){
+					container._filters.category = CATEGORIES[i];
+					container._refresh();
+				}
+			})(i));
+	}
 }
 
 /*******************************************************************************

@@ -1,0 +1,23 @@
+{
+  "name": "cpen400a-brave-bobcat",
+  "version": "1.0.0",
+  "description": "CPEN400A Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jungkumseok/cpen400a-brave-bobcat.git"
+  },
+  "author": "ryanliu6, jsun12",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jungkumseok/cpen400a-brave-bobcat/issues"
+  },
+  "homepage": "https://github.com/jungkumseok/cpen400a-brave-bobcat#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongodb": "^3.1.10"
+  }
+}
