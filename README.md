@@ -1,1 +1,3 @@
-Hello Git!
+CPEN400A
+
+Branches are assignments
